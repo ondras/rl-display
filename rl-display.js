@@ -1,7 +1,7 @@
 const EFFECTS = {
 	"pulse": {
 		keyframes: {
-			transform: ["scale(1)", "scale(1.6)", "scale(1)"],
+			scale: [1, 1.6, 1],
 			offset: [0, 0.1, 1]
 		},
 		options: 500
@@ -26,6 +26,8 @@ const EFFECTS = {
 
 
 export default class RlDisplay extends HTMLElement {
+	#nodes = new Map();
+
 	static computeTileSize(tileCount, area, aspectRatioRange) {
 		let w = Math.floor(area[0]/tileCount[0]);
 		let h = Math.floor(area[1]/tileCount[1]);
@@ -38,8 +40,6 @@ export default class RlDisplay extends HTMLElement {
 		return [w, h];
 	}
 
-	nodes = new Map();
-
 	constructor() {
 		super();
 		this.attachShadow({mode: "open"});
@@ -50,44 +50,37 @@ export default class RlDisplay extends HTMLElement {
 		style.setProperty("--tile-count-y", "10");
 	}
 
-	add(item, position, visual) {
-		const { shadowRoot, nodes } = this;
+	draw(x, y, visual, id=undefined) {
+		id = id || Math.random();
 		let node = document.createElement("div");
-		shadowRoot.append(node);
-		nodes.set(item, node);
-		this.setVisual(item, visual);
-		this.setPosition(item, position);
+		this.shadowRoot.append(node);
+		this.#nodes.set(id, node);
+
+		updateVisual(node, visual);
+		updatePosition(node, x, y);
+
+		return id;
 	}
 
-	remove(item) {
-		const { nodes } = this;
-		let node = nodes.get(item);
-		node.remove();
-		nodes.delete(item);
+	at(x, y) {
+		for (let [id, node] of this.#nodes) {
+			const { style } = node;
+			if (style.getPropertyValue("--x") == x && style.getPropertyValue("--y") == y) { return id; }
+		}
 	}
 
-	setPosition(item, position) {
-		const { nodes } = this;
-		let node = nodes.get(item);
-		node.style.setProperty("--x", position[0]);
-		node.style.setProperty("--y", position[1]);
+	move(id, x, y, options={}) {
+		let node = this.#nodes.get(id);
+		return updatePosition(node, x, y);
 	}
 
-	setVisual(item, visual) {
-		const { nodes } = this;
-		let node = nodes.get(item);
-		if (visual.ch) { node.textContent = visual.ch; }
-		if (visual.fg) { node.style.color = visual.fg; }
-		if (visual.bg) { node.style.backgroundColor = visual.bg; }
+	remove(id) {
+		this.#nodes.get(id).remove();
+		this.#nodes.delete(id);
 	}
 
-	setViewport(size, ) {
-
-	}
-
-	fx(item, effect) {
-		const { nodes } = this;
-		let node = nodes.get(item);
+	fx(id, effect) {
+		let node = this.#nodes.get(id);
 		let fx = EFFECTS[effect];
 		let animation = node.animate(fx.keyframes, fx.options);
 		return animation.finished;
@@ -130,3 +123,14 @@ div {
 `;
 
 customElements.define("rl-display", RlDisplay);
+
+function updatePosition(node, x, y) {
+	node.style.setProperty("--x", x);
+	node.style.setProperty("--y", y);
+}
+
+function updateVisual(node, visual) {
+	if (visual.ch) { node.textContent = visual.ch; }
+	if (visual.fg) { node.style.color = visual.fg; }
+	if (visual.bg) { node.style.backgroundColor = visual.bg; }
+}

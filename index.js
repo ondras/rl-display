@@ -16,18 +16,17 @@ async function readKey() {
 }
 
 let display = document.querySelector("rl-display");
-let stuff = {};
 let position = [5, 5];
-display.add(stuff, position, {ch:"@", fg:"red"});
+let id = display.draw(...position, {ch:"@", fg:"red"});
 
 
 while (true) {
 	let key = await readKey();
 	switch (key.key) {
-		case "ArrowLeft": position[0]--; display.setPosition(stuff, position); break;
-		case "ArrowRight": position[0]++; display.setPosition(stuff, position); break;
-		case "ArrowUp": position[1]--; display.setPosition(stuff, position); break;
-		case "ArrowDown": position[1]++; display.setPosition(stuff, position); break;
+		case "ArrowLeft": position[0]--; display.move(id, ...position); display.fx(id, "pulse"); break;
+		case "ArrowRight": position[0]++; display.move(id, ...position); break;
+		case "ArrowUp": position[1]--; display.move(id, ...position); break;
+		case "ArrowDown": position[1]++; display.move(id, ...position); break;
 	}
 }
 
