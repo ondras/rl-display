@@ -71,7 +71,13 @@ export default class RlDisplay extends HTMLElement {
 
 	move(id, x, y, options={}) {
 		let node = this.#nodes.get(id);
-		return updatePosition(node, x, y);
+
+		return node.animate([
+			{
+				"--x": x,
+				"--y": y
+			}
+		], 100).finished.then(() => updatePosition(node, x, y));
 	}
 
 	remove(id) {
@@ -94,11 +100,27 @@ export default class RlDisplay extends HTMLElement {
 
 function createStyle() {
 	let style = document.createElement("style");
-	style.textContent = STYLE;
+	style.textContent = PRIVATE_STYLE;
 	return style;
 }
 
-const STYLE = `
+const PUBLIC_STYLE = `
+@property --x {
+	syntax: "<number>";
+	inherits: false;
+	initial-value: 0;
+}
+
+@property --y {
+	syntax: "<number>";
+	inherits: false;
+	initial-value: 0;
+}
+`;
+
+
+const PRIVATE_STYLE = `
+
 :host {
 	display: block;
 	position: relative;
@@ -118,7 +140,7 @@ div {
 	top: calc(var(--tile-height) * var(--y));
 	font-size: calc(var(--tile-height));
 	line-height: 1;
-	transition: all 100ms;
+	transition: --x 300ms;
 }
 `;
 
