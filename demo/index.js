@@ -19,6 +19,22 @@ let display = document.querySelector("rl-display");
 let position = [5, 5];
 let id = display.draw(...position, {ch:"@", fg:"red"});
 
+for (let x=0;x<display.width;x++) {
+	for (let y=0;y<display.height;y++) {
+		if (x > 0 && x < display.width-1 && y > 0 && y < display.height-1) continue;
+		display.draw(x, y, {ch:"#"});
+	}
+}
+display.pan(display.width/2-position[0]-0.5, display.height/2-position[1]-0.5);
+
+document.querySelector(`[name="3"]`).addEventListener("click", _ => display.zoom(3));
+document.querySelector(`[name="2"]`).addEventListener("click", _ => display.zoom(2));
+document.querySelector(`[name="1"]`).addEventListener("click", _ => display.zoom(1));
+document.querySelector(`[name="p00"]`).addEventListener("click", _ => display.pan(0, 0));
+document.querySelector(`[name="p10"]`).addEventListener("click", _ => display.pan(1, 0));
+document.querySelector(`[name="p01"]`).addEventListener("click", _ => display.pan(0, 1));
+document.querySelector(`[name="p11"]`).addEventListener("click", _ => display.pan(1, 1));
+
 
 while (true) {
 	let key = await readKey();
@@ -29,6 +45,7 @@ while (true) {
 		case "ArrowDown": position[1]++; display.move(id, ...position); break;
 	}
 }
+
 
 
 /*

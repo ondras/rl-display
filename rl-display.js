@@ -27,6 +27,7 @@ const EFFECTS = {
 
 export default class RlDisplay extends HTMLElement {
 	#nodes = new Map();
+	#canvas = document.createElement("div");
 
 	static computeTileSize(tileCount, area, aspectRatioRange) {
 		let w = Math.floor(area[0]/tileCount[0]);
@@ -47,17 +48,32 @@ export default class RlDisplay extends HTMLElement {
 		style.setProperty("--tile-width", "20px");
 		style.setProperty("--tile-height", "20px");
 		style.setProperty("--tile-count-x", "15");
-		style.setProperty("--tile-count-y", "10");
+		style.setProperty("--tile-count-y", "9");
+
+		this.#canvas.id = "canvas";
+	}
+
+	get width() { return Number(this.style.getPropertyValue("--tile-count-x")); }
+	get height() { return Number(this.style.getPropertyValue("--tile-count-y")); }
+
+	zoom(zoom) {
+		let props = {"--scale": zoom};
+		return this.animate([props], 100).finished.then(() => updateProperties(this, props));
+	}
+
+	pan(x, y) {
+		let props = {"--pan-x": x, "--pan-y": y};
+		return this.animate([props], 100).finished.then(() => updateProperties(this, props));
 	}
 
 	draw(x, y, visual, id=undefined) {
 		id = id || Math.random();
 		let node = document.createElement("div");
-		this.shadowRoot.append(node);
+		this.#canvas.append(node);
 		this.#nodes.set(id, node);
 
 		updateVisual(node, visual);
-		updatePosition(node, x, y);
+		updateProperties(node, {"--x":x, "--y":y});
 
 		return id;
 	}
@@ -71,13 +87,11 @@ export default class RlDisplay extends HTMLElement {
 
 	move(id, x, y, options={}) {
 		let node = this.#nodes.get(id);
-
-		return node.animate([
-			{
-				"--x": x,
-				"--y": y
-			}
-		], 100).finished.then(() => updatePosition(node, x, y));
+		let props = {
+			"--x": x,
+			"--y": y
+		};
+		return node.animate([props], 100).finished.then(() => updateProperties(node, props));
 	}
 
 	remove(id) {
@@ -93,14 +107,16 @@ export default class RlDisplay extends HTMLElement {
 	}
 
 	connectedCallback() {
-		const { shadowRoot } = this;
-		shadowRoot.replaceChildren(createStyle());
+		this.shadowRoot.replaceChildren(
+			createStyle(PRIVATE_STYLE),
+			this.#canvas
+		);
 	}
 }
 
-function createStyle() {
+function createStyle(src) {
 	let style = document.createElement("style");
-	style.textContent = PRIVATE_STYLE;
+	style.textContent = src;
 	return style;
 }
 
@@ -116,6 +132,24 @@ const PUBLIC_STYLE = `
 	inherits: false;
 	initial-value: 0;
 }
+
+@property --scale {
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 1;
+}
+
+@property --pan-x {
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 0;
+}
+
+@property --pan-y {
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 0;
+}
 `;
 
 
@@ -123,36 +157,47 @@ const PRIVATE_STYLE = `
 
 :host {
 	display: block;
-	position: relative;
+	overflow: hidden;
 	width: calc(var(--tile-width) * var(--tile-count-x));
 	height: calc(var(--tile-height) * var(--tile-count-y));
-	user-select: none;
 	background-color: #000;
-	font-family: monospace;
-	color: gray;
 }
 
-div {
-	position: absolute;
-	width: var(--tile-width);
-	text-align: center;
-	left: calc(var(--tile-width) * var(--x));
-	top: calc(var(--tile-height) * var(--y));
-	font-size: calc(var(--tile-height));
-	line-height: 1;
-	transition: --x 300ms;
+#canvas {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	user-select: none;
+	font-family: monospace;
+	color: gray;
+	scale: var(--scale);
+	translate: calc(var(--pan-x) * var(--tile-width) * var(--scale)) calc(var(--pan-y) * var(--tile-height) * var(--scale));
+
+	div {
+		position: absolute;
+		width: var(--tile-width);
+		text-align: center;
+		left: calc(var(--tile-width) * var(--x));
+		top: calc(var(--tile-height) * var(--y));
+		font-size: calc(var(--tile-height));
+		line-height: 1;
+	}
 }
+
 `;
+
+document.head.append(createStyle(PUBLIC_STYLE));
 
 customElements.define("rl-display", RlDisplay);
 
-function updatePosition(node, x, y) {
-	node.style.setProperty("--x", x);
-	node.style.setProperty("--y", y);
+function updateProperties(node, props) {
+	for (let key in props) { node.style.setProperty(key, props[key]); }
 }
 
 function updateVisual(node, visual) {
 	if (visual.ch) { node.textContent = visual.ch; }
-	if (visual.fg) { node.style.color = visual.fg; }
-	if (visual.bg) { node.style.backgroundColor = visual.bg; }
+	let props = {};
+	if (visual.fg) { props.color = visual.fg; }
+	if (visual.bg) { props.backgroundColor = visual.bg; }
+	updateProperties(node, props);
 }
