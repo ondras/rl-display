@@ -103,8 +103,7 @@ export default class RlDisplay extends HTMLElement {
 	fx(id, effect) {
 		let node = this.#nodes.get(id);
 		let fx = EFFECTS[effect];
-		let animation = node.animate(fx.keyframes, fx.options);
-		return animation.finished;
+		return node.animate(fx.keyframes, fx.options);
 	}
 
 	connectedCallback() {
