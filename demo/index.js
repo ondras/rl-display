@@ -25,21 +25,21 @@ for (let x=0;x<display.width;x++) {
 		display.draw(x, y, {ch:"#"});
 	}
 }
-display.pan(display.width/2-position[0]-0.5, display.height/2-position[1]-0.5);
+display.panTo(...position);
 
-document.querySelector(`[name="3"]`).addEventListener("click", _ => display.zoom(3));
-document.querySelector(`[name="2"]`).addEventListener("click", _ => display.zoom(2));
-document.querySelector(`[name="1"]`).addEventListener("click", _ => display.zoom(1));
-document.querySelector(`[name="p00"]`).addEventListener("click", _ => display.pan(0, 0));
-document.querySelector(`[name="p10"]`).addEventListener("click", _ => display.pan(1, 0));
-document.querySelector(`[name="p01"]`).addEventListener("click", _ => display.pan(0, 1));
-document.querySelector(`[name="p11"]`).addEventListener("click", _ => display.pan(1, 1));
+document.querySelector(`[name="3"]`).addEventListener("click", _ => display.scaleTo(3));
+document.querySelector(`[name="2"]`).addEventListener("click", _ => display.scaleTo(2));
+document.querySelector(`[name="1"]`).addEventListener("click", _ => display.scaleTo(1));
+document.querySelector(`[name="p00"]`).addEventListener("click", _ => display.panTo(0, 0));
+document.querySelector(`[name="p10"]`).addEventListener("click", _ => display.panTo(1, 0));
+document.querySelector(`[name="p01"]`).addEventListener("click", _ => display.panTo(0, 1));
+document.querySelector(`[name="p11"]`).addEventListener("click", _ => display.panTo(1, 1));
 
 
 while (true) {
 	let key = await readKey();
 	switch (key.key) {
-		case "ArrowLeft": position[0]--; display.move(id, ...position); display.fx(id, "pulse"); break;
+		case "ArrowLeft": position[0]--; display.move(id, ...position); display.panTo(...position); display.fx(id, "pulse"); break;
 		case "ArrowRight": position[0]++; display.move(id, ...position); break;
 		case "ArrowUp": position[1]--; display.move(id, ...position); break;
 		case "ArrowDown": position[1]++; display.move(id, ...position); break;

@@ -56,14 +56,24 @@ export default class RlDisplay extends HTMLElement {
 	get width() { return Number(this.style.getPropertyValue("--tile-count-x")); }
 	get height() { return Number(this.style.getPropertyValue("--tile-count-y")); }
 
-	zoom(zoom) {
-		let props = {"--scale": zoom};
-		return this.animate([props], 100).finished.then(() => updateProperties(this, props));
+	scaleTo(scale) {
+		let a = this.animate([{"--scale": scale}], {duration:100, fill:"both"});
+		return waitAndCommit(a);
 	}
 
-	pan(x, y) {
-		let props = {"--pan-x": x, "--pan-y": y};
-		return this.animate([props], 100).finished.then(() => updateProperties(this, props));
+	panTo(x, y) {
+		let a = this.animate([{"--pan-x": x, "--pan-y": y}], {duration:100, fill:"both"});
+		return waitAndCommit(a);
+	}
+
+	move(id, x, y, options={}) {
+		let node = this.#nodes.get(id);
+		let props = {
+			"--x": x,
+			"--y": y
+		};
+		let a = node.animate([props], {duration:100, fill:"both"});
+		return waitAndCommit(a);
 	}
 
 	draw(x, y, visual, id=undefined) {
@@ -85,15 +95,6 @@ export default class RlDisplay extends HTMLElement {
 		}
 	}
 
-	move(id, x, y, options={}) {
-		let node = this.#nodes.get(id);
-		let props = {
-			"--x": x,
-			"--y": y
-		};
-		return node.animate([props], 100).finished.then(() => updateProperties(node, props));
-	}
-
 	remove(id) {
 		this.#nodes.get(id).remove();
 		this.#nodes.delete(id);
@@ -112,6 +113,11 @@ export default class RlDisplay extends HTMLElement {
 			this.#canvas
 		);
 	}
+}
+
+async function waitAndCommit(a) {
+	await a.finished;
+	a.commitStyles();
 }
 
 function createStyle(src) {
@@ -154,24 +160,25 @@ const PUBLIC_STYLE = `
 
 
 const PRIVATE_STYLE = `
-
 :host {
 	display: block;
 	overflow: hidden;
 	width: calc(var(--tile-width) * var(--tile-count-x));
 	height: calc(var(--tile-height) * var(--tile-count-y));
 	background-color: #000;
+	font-family: monospace;
+	color: gray;
+	user-select: none;
 }
 
 #canvas {
 	position: relative;
 	width: 100%;
 	height: 100%;
-	user-select: none;
-	font-family: monospace;
-	color: gray;
 	scale: var(--scale);
-	translate: calc(var(--pan-x) * var(--tile-width) * var(--scale)) calc(var(--pan-y) * var(--tile-height) * var(--scale));
+	--translate-x: calc(var(--tile-count-x) / 2 - var(--pan-x) - 0.5);
+	--translate-y: calc(var(--tile-count-y) / 2 - var(--pan-y) - 0.5);
+	translate: calc(var(--translate-x) * var(--tile-width) * var(--scale)) calc(var(--translate-y) * var(--tile-height) * var(--scale));
 
 	div {
 		position: absolute;
@@ -183,12 +190,10 @@ const PRIVATE_STYLE = `
 		line-height: 1;
 	}
 }
-
 `;
 
-document.head.append(createStyle(PUBLIC_STYLE));
-
 customElements.define("rl-display", RlDisplay);
+document.head.append(createStyle(PUBLIC_STYLE));
 
 function updateProperties(node, props) {
 	for (let key in props) { node.style.setProperty(key, props[key]); }
