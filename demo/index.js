@@ -34,6 +34,7 @@ document.querySelector(`[name="p00"]`).addEventListener("click", _ => display.pa
 document.querySelector(`[name="p10"]`).addEventListener("click", _ => display.panTo(1, 0));
 document.querySelector(`[name="p01"]`).addEventListener("click", _ => display.panTo(0, 1));
 document.querySelector(`[name="p11"]`).addEventListener("click", _ => display.panTo(1, 1));
+document.querySelector(`[name="pcenter"]`).addEventListener("click", _ => display.panToCenter());
 
 
 while (true) {

@@ -44,12 +44,6 @@ export default class RlDisplay extends HTMLElement {
 	constructor() {
 		super();
 		this.attachShadow({mode: "open"});
-		const { style } = this;
-		style.setProperty("--tile-width", "20px");
-		style.setProperty("--tile-height", "20px");
-		style.setProperty("--tile-count-x", "15");
-		style.setProperty("--tile-count-y", "9");
-
 		this.#canvas.id = "canvas";
 	}
 
@@ -62,8 +56,18 @@ export default class RlDisplay extends HTMLElement {
 	}
 
 	panTo(x, y) {
-		let a = this.animate([{"--pan-x": x, "--pan-y": y}], {duration:100, fill:"both"});
+		const { width, height } = this;
+		let props = {
+			"--pan-dx": width/2 - (x + 0.5),
+			"--pan-dy": height/2 - (y + 0.5)
+		}
+		let a = this.animate([props], {duration:100, fill:"both"});
 		return waitAndCommit(a);
+	}
+
+	panToCenter() {
+		const { width, height } = this;
+		return this.panTo(width/2 - 0.5, height/2 - 0.5);
 	}
 
 	move(id, x, y, options={}) {
@@ -107,7 +111,13 @@ export default class RlDisplay extends HTMLElement {
 	}
 
 	connectedCallback() {
-		this.shadowRoot.replaceChildren(
+		const { style, shadowRoot } = this;
+		style.setProperty("--tile-width", "20px");
+		style.setProperty("--tile-height", "20px");
+		style.setProperty("--tile-count-x", "15");
+		style.setProperty("--tile-count-y", "9");
+
+		shadowRoot.replaceChildren(
 			createStyle(PRIVATE_STYLE),
 			this.#canvas
 		);
@@ -144,13 +154,13 @@ const PUBLIC_STYLE = `
 	initial-value: 1;
 }
 
-@property --pan-x {
+@property --pan-dx {
 	syntax: "<number>";
 	inherits: true;
 	initial-value: 0;
 }
 
-@property --pan-y {
+@property --pan-dy {
 	syntax: "<number>";
 	inherits: true;
 	initial-value: 0;
@@ -175,9 +185,7 @@ const PRIVATE_STYLE = `
 	width: 100%;
 	height: 100%;
 	scale: var(--scale);
-	--translate-x: calc(var(--tile-count-x) / 2 - var(--pan-x) - 0.5);
-	--translate-y: calc(var(--tile-count-y) / 2 - var(--pan-y) - 0.5);
-	translate: calc(var(--translate-x) * var(--tile-width) * var(--scale)) calc(var(--translate-y) * var(--tile-height) * var(--scale));
+	translate: calc(var(--pan-dx) * var(--tile-width) * var(--scale)) calc(var(--pan-dy) * var(--tile-height) * var(--scale));
 
 	div {
 		position: absolute;
