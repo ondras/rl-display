@@ -59,13 +59,10 @@ export default class ExAmple extends HTMLElement {
 		this.#pre.textContent = this.#code;
 
 		let ac = new AbortController();
+		const { signal } = ac;
 		this.#ac = ac;
 
-		let env = {
-			sleep,
-			signal: ac.signal
-		}
-
+		let env = { sleep, signal };
 		let keys = Object.keys(env);
 		let values = Object.values(env);
 
