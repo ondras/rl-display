@@ -17,11 +17,8 @@ for (let x=0;x<display.width;x++) {
 
 yield display;
 
-//function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
-let sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-
 let pc = display.draw(5, 5, {ch:"@"});
-while (display.isConnected) {
+while (!signal.aborted) {
 	await sleep(1000);
 	await display.move(pc, 4, 4);
 	await sleep(1000);
