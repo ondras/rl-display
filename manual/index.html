@@ -6,9 +6,28 @@
 	<body>
 <script type="application/x-ample">
 let display = document.createElement("rl-display");
-display.draw(5, 5, {ch:"@"});
-console.log(display);
-return display;
+for (let x=0;x<display.width;x++) {
+	for (let y=0;y<display.height;y++) {
+		let in_x = x * (display.width-1-x);
+		let in_y = y * (display.height-1-y);
+		let ch = in_x && in_y ? "." : "#";
+		display.draw(x, y, {ch});
+	}
+}
+
+yield display;
+
+//function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+let sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+let pc = display.draw(5, 5, {ch:"@"});
+while (display.isConnected) {
+	await sleep(1000);
+	await display.move(pc, 4, 4);
+	await sleep(1000);
+	await display.move(pc, 3, 3);
+}
+
 </script>
 
 		<script type="module" src="../rl-display.js"></script>

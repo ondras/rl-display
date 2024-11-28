@@ -28,6 +28,7 @@ const EFFECTS = {
 export default class RlDisplay extends HTMLElement {
 	#nodes = new Map();
 	#canvas = document.createElement("div");
+	#canvasSize = [20, 10];
 
 	static computeTileSize(tileCount, area, aspectRatioRange) {
 		let w = Math.floor(area[0]/tileCount[0]);
@@ -47,8 +48,17 @@ export default class RlDisplay extends HTMLElement {
 		this.#canvas.id = "canvas";
 	}
 
-	get width() { return Number(this.style.getPropertyValue("--tile-count-x")); }
-	get height() { return Number(this.style.getPropertyValue("--tile-count-y")); }
+	get width() { return this.#canvasSize[0]; }
+	set width(width) {
+		this.#canvasSize[0] = width;
+		this.style.setProperty("--canvas-width", width);
+	}
+
+	get height() { return this.#canvasSize[1]; }
+	set height(height) {
+		this.#canvasSize[1] = height;
+		this.style.setProperty("--canvas-height", height);
+	}
 
 	scaleTo(scale) {
 		let a = this.animate([{"--scale": scale}], {duration:100, fill:"both"});
@@ -99,7 +109,7 @@ export default class RlDisplay extends HTMLElement {
 		}
 	}
 
-	remove(id) {
+	delete(id) {
 		this.#nodes.get(id).remove();
 		this.#nodes.delete(id);
 	}
@@ -112,10 +122,13 @@ export default class RlDisplay extends HTMLElement {
 
 	connectedCallback() {
 		const { style, shadowRoot } = this;
+
+		// apply css props
+		this.width = this.width;
+		this.height = this.height;
+
 		style.setProperty("--tile-width", "20px");
 		style.setProperty("--tile-height", "20px");
-		style.setProperty("--tile-count-x", "15");
-		style.setProperty("--tile-count-y", "9");
 
 		shadowRoot.replaceChildren(
 			createStyle(PRIVATE_STYLE),
@@ -126,7 +139,7 @@ export default class RlDisplay extends HTMLElement {
 
 async function waitAndCommit(a) {
 	await a.finished;
-	a.commitStyles();
+	a.effect.target.isConnected && a.commitStyles();
 }
 
 function createStyle(src) {
@@ -170,10 +183,10 @@ const PUBLIC_STYLE = `
 
 const PRIVATE_STYLE = `
 :host {
-	display: block;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
 	overflow: hidden;
-	width: calc(var(--tile-width) * var(--tile-count-x));
-	height: calc(var(--tile-height) * var(--tile-count-y));
 	background-color: #000;
 	font-family: monospace;
 	color: gray;
@@ -181,11 +194,14 @@ const PRIVATE_STYLE = `
 }
 
 #canvas {
+	flex: none;
 	position: relative;
-	width: 100%;
-	height: 100%;
+	width: calc(var(--tile-width) * var(--canvas-width));
+	height: calc(var(--tile-height) * var(--canvas-height));
 	scale: var(--scale);
-	translate: calc(var(--pan-dx) * var(--tile-width) * var(--scale)) calc(var(--pan-dy) * var(--tile-height) * var(--scale));
+	translate:
+	    calc(var(--tile-width) * var(--pan-dx) * var(--scale))
+	    calc(var(--tile-height) * var(--pan-dy) * var(--scale));
 
 	div {
 		position: absolute;

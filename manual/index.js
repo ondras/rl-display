@@ -1,3 +1,5 @@
+const AsyncGeneratorFunction = (async function*() {}).constructor;
+
 class ExAmple extends HTMLElement {
 	#result = document.createElement("div");
 	#pre = document.createElement("pre");
@@ -10,18 +12,25 @@ class ExAmple extends HTMLElement {
 		this.#pre.className = "code";
 		this.#pre.textContent = code;
 
-		let func = new Function(code);
+
 		this.#result.className = "result";
-		this.#result.append(func());
+		//this.#result.append(func());
 	}
 
-	connectedCallback() {
+	async connectedCallback() {
 		const { shadowRoot } = this;
 		shadowRoot.innerHTML = HTML;
 		shadowRoot.append(this.#result, this.#pre);
 
 		shadowRoot.querySelector("[name=result]").checked = true;
 		shadowRoot.querySelector("[name=code]").checked = true;
+
+		let func = new AsyncGeneratorFunction(this.#pre.textContent);
+
+		let gen = func();
+		for await (let result of gen) {
+			this.#result.append(result);
+		}
 	}
 }
 

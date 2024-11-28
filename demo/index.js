@@ -25,7 +25,10 @@ for (let x=0;x<display.width;x++) {
 		display.draw(x, y, {ch:"#"});
 	}
 }
-display.panTo(...position);
+await display.panTo(...position);
+await display.scaleTo(2);
+//await display.panToCenter();
+//await display.scaleTo(1);
 
 document.querySelector(`[name="3"]`).addEventListener("click", _ => display.scaleTo(3));
 document.querySelector(`[name="2"]`).addEventListener("click", _ => display.scaleTo(2));
