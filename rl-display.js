@@ -24,9 +24,27 @@ const EFFECTS = {
 	}
 }
 
+function positionKey(x, y) { return `${x},${y}`; }
+
+class NodeStorage {
+	#byId = new Map();
+	#byPosition = new Map();
+
+	getById(id) { return this.#byId.get(id); }
+	getByPosition(x, y) { return this.#byPosition.get(positionKey(x, y)); }
+
+	set() {
+
+	}
+
+	delete(id) {
+
+	}
+}
+
 
 export default class RlDisplay extends HTMLElement {
-	#nodes = new Map();
+	#storage = new NodeStorage();
 	#canvas = document.createElement("div");
 	#canvasSize = [20, 10];
 
@@ -81,7 +99,8 @@ export default class RlDisplay extends HTMLElement {
 	}
 
 	move(id, x, y, options={}) {
-		let node = this.#nodes.get(id);
+		let node = this.#storage.byId(id);
+		// fixme if none
 		let props = {
 			"--x": x,
 			"--y": y
@@ -90,11 +109,11 @@ export default class RlDisplay extends HTMLElement {
 		return waitAndCommit(a);
 	}
 
-	draw(x, y, visual, id=undefined) {
+	draw(x, y, visual, options={}) {
 		id = id || Math.random();
 		let node = document.createElement("div");
 		this.#canvas.append(node);
-		this.#nodes.set(id, node);
+		this.#storage.set(node, id, x, y);
 
 		updateVisual(node, visual);
 		updateProperties(node, {"--x":x, "--y":y});
@@ -102,20 +121,16 @@ export default class RlDisplay extends HTMLElement {
 		return id;
 	}
 
-	at(x, y) {
-		for (let [id, node] of this.#nodes) {
-			const { style } = node;
-			if (style.getPropertyValue("--x") == x && style.getPropertyValue("--y") == y) { return id; }
-		}
-	}
-
 	delete(id) {
-		this.#nodes.get(id).remove();
-		this.#nodes.delete(id);
+		let node = this.#storage.byId(id);
+		// fixme if none
+		node.remove();
+		this.#storage.delete(id);
 	}
 
 	fx(id, effect) {
-		let node = this.#nodes.get(id);
+		let node = this.#storage.byId(id);
+		// fixme if none
 		let fx = EFFECTS[effect];
 		return node.animate(fx.keyframes, fx.options);
 	}
