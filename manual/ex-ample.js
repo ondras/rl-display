@@ -31,9 +31,6 @@ export default class ExAmple extends HTMLElement {
 		const { shadowRoot } = this;
 		shadowRoot.innerHTML = HTML;
 
-		shadowRoot.querySelector("[name=result]").checked = true;
-		shadowRoot.querySelector("[name=code]").checked = true;
-
 		this.#pre.addEventListener("click", _ => {
 			let height = this.#pre.offsetHeight;
 			this.#pre.hidden = true;
@@ -84,15 +81,6 @@ const HTML = `
 	box-sizing: border-box;
 }
 
-nav {
-	display: flex;
-	justify-content: space-between;
-	label {
-		display: flex;
-		align-items: center;
-	}
-}
-
 textarea, .code {
 	font-family: monospace;
 	font-size: inherit;
@@ -101,13 +89,7 @@ textarea, .code {
 	width: 100%;
 }
 
-nav:has([name=result]:not(:checked)) ~ .result { display: none; }
-nav:has([name=code]:not(:checked)) ~ .code { display: none; }
 </style>
-<nav>
-	<label><input type="checkbox" name="result">result</input></label>
-	<label><input type="checkbox" name="code">code</input></label>
-</nav>
 <div class="result"></div>
 <pre class="code"></pre>
 <textarea></textarea>
