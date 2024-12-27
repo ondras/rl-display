@@ -27,18 +27,51 @@ const EFFECTS = {
 function positionKey(x, y) { return `${x},${y}`; }
 
 class NodeStorage {
-	#byId = new Map();
-	#byPosition = new Map();
+	#idToData = new Map();
+	#idToKey = new Map();
+	#keyToIds = new Map();
 
-	getById(id) { return this.#byId.get(id); }
-	getByPosition(x, y) { return this.#byPosition.get(positionKey(x, y)); }
+	getById(id) { return this.#idToData.get(id); }
+	getIdsByPosition(x, y) { return this.#keyToIds.get(positionKey(x, y)); }
+	getIdByPosition(x, y, zIndex) {
+		let ids = this.getIdsByPosition(x, y) || new Set();
+		return [...ids].find(id => this.getById(id).zIndex == zIndex);
+	}
 
-	set() {
+	add(id, data) {
+		this.#idToData.set(id, data);
+		let key = positionKey(data.x, data.y);
+		this.#idToKey.set(id, key);
+		this.#addIdToSet(id, key);
+	}
 
+	update(id, data) {
+		// update data storage
+		let currentData = this.getById(id);
+		Object.assign(currentData, data);
+
+		let currentKey = this.#idToKey.get(id);
+		let newKey = positionKey(currentData.x, currentData.y);
+		if (currentKey != newKey) { // position changed
+			this.#keyToIds.get(currentKey).delete(id);
+			this.#addIdToSet(id, newKey);
+			this.#idToKey.set(id, newKey);
+		}
+	}
+
+	#addIdToSet(id, key) {
+		if (this.#keyToIds.has(key)) {
+			this.#keyToIds.get(key).add(id);
+		} else {
+			this.#keyToIds.set(key, new Set([id]));
+		}
 	}
 
 	delete(id) {
-
+		this.#idToData.delete(id);
+		let key = this.#idToKey.get(id);
+		this.#keyToIds.get(key).delete(id);
+		this.#idToKey.delete(id);
 	}
 }
 
@@ -62,7 +95,7 @@ export default class RlDisplay extends HTMLElement {
 
 	constructor() {
 		super();
-		this.attachShadow({mode: "open"});
+		this.attachShadow({mode:"open"});
 		this.#canvas.id = "canvas";
 	}
 
@@ -98,41 +131,71 @@ export default class RlDisplay extends HTMLElement {
 		return this.panTo(width/2 - 0.5, height/2 - 0.5);
 	}
 
-	move(id, x, y, options={}) {
-		let node = this.#storage.byId(id);
-		// fixme if none
-		let props = {
-			"--x": x,
-			"--y": y
-		};
-		let a = node.animate([props], {duration:100, fill:"both"});
-		return waitAndCommit(a);
-	}
-
 	draw(x, y, visual, options={}) {
-		id = id || Math.random();
-		let node = document.createElement("div");
-		this.#canvas.append(node);
-		this.#storage.set(node, id, x, y);
+		let id = options.id || Math.random();
+		let zIndex = options.zIndex || 0;
+
+		let existing = this.#storage.getIdByPosition(x, y, zIndex);
+		if (existing && existing != id) { console.log("deleting"); this.delete(existing); }
+
+		let node;
+		let data = this.#storage.getById(id);
+		if (data) {
+			// fixmy applyDepth na stare pozici
+			this.#storage.update(id, {x, y, zIndex});
+			node = data.node;
+		} else {
+			node = document.createElement("div");
+			this.#canvas.append(node);
+			this.#storage.add(id, {x, y, zIndex, node});
+		}
 
 		updateVisual(node, visual);
-		updateProperties(node, {"--x":x, "--y":y});
+		updateProperties(node, {"--x":x, "--y":y, zIndex});
+
+		this.#applyDepth(x, y);
 
 		return id;
 	}
 
-	delete(id) {
-		let node = this.#storage.byId(id);
+	async move(id, x, y) {
+		let data = this.#storage.getById(id);
 		// fixme if none
-		node.remove();
-		this.#storage.delete(id);
+
+		let existing = this.#storage.getIdByPosition(x, y, data.zIndex);
+		if (existing && existing != id) { this.delete(existing); }
+
+		let { x:oldX, y:oldY } = data;
+		this.#storage.update(id, {x, y});
+		this.#applyDepth(oldX, oldY);
+
+		let props = {
+			"--x": x,
+			"--y": y
+		};
+		let a = data.node.animate([props], {duration:100, fill:"both"});
+		await waitAndCommit(a);
+		this.#applyDepth(x, y);
+	}
+
+	clear(x, y, zIndex=0) {
+		let id = this.#storage.getIdByPosition(x, y, zIndex);
+		if (id) { this.delete(id); }
+	}
+
+	delete(id) {
+		let data = this.#storage.getById(id);
+		if (data) {
+			data.node.remove();
+			this.#storage.delete(id);
+		}
 	}
 
 	fx(id, effect) {
-		let node = this.#storage.byId(id);
+		let record = this.#storage.getById(id);
 		// fixme if none
 		let fx = EFFECTS[effect];
-		return node.animate(fx.keyframes, fx.options);
+		return record.node.animate(fx.keyframes, fx.options);
 	}
 
 	connectedCallback() {
@@ -149,6 +212,18 @@ export default class RlDisplay extends HTMLElement {
 			createStyle(PRIVATE_STYLE),
 			this.#canvas
 		);
+	}
+
+	#applyDepth(x, y) {
+		let ids = this.#storage.getIdsByPosition(x, y);
+		let data = [...ids].map(id => this.#storage.getById(id));
+
+		let maxZindex = -1/0;
+		data.forEach(data => maxZindex = Math.max(maxZindex, data.zIndex));
+
+		data.forEach(data => {
+			data.node.hidden = data.zIndex < maxZindex;
+		});
 	}
 }
 

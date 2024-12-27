@@ -17,7 +17,7 @@ async function readKey() {
 
 let display = document.querySelector("rl-display");
 let position = [5, 5];
-let id = display.draw(...position, {ch:"@", fg:"red"});
+let id = display.draw(...position, {ch:"@", fg:"red"}, {zIndex:1});
 
 for (let x=0;x<display.width;x++) {
 	for (let y=0;y<display.height;y++) {
@@ -26,6 +26,7 @@ for (let x=0;x<display.width;x++) {
 	}
 }
 await display.panTo(...position);
+await new Promise(resolve => setTimeout(resolve, 300));
 await display.scaleTo(2);
 //await display.panToCenter();
 //await display.scaleTo(1);
