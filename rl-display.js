@@ -1,3 +1,5 @@
+import { ArrayStorage as Storage } from "./storage.js";
+
 const EFFECTS = {
 	"pulse": {
 		keyframes: {
@@ -24,60 +26,9 @@ const EFFECTS = {
 	}
 }
 
-function positionKey(x, y) { return `${x},${y}`; }
-
-class NodeStorage {
-	#idToData = new Map();
-	#idToKey = new Map();
-	#keyToIds = new Map();
-
-	getById(id) { return this.#idToData.get(id); }
-	getIdsByPosition(x, y) { return this.#keyToIds.get(positionKey(x, y)); }
-	getIdByPosition(x, y, zIndex) {
-		let ids = this.getIdsByPosition(x, y) || new Set();
-		return [...ids].find(id => this.getById(id).zIndex == zIndex);
-	}
-
-	add(id, data) {
-		this.#idToData.set(id, data);
-		let key = positionKey(data.x, data.y);
-		this.#idToKey.set(id, key);
-		this.#addIdToSet(id, key);
-	}
-
-	update(id, data) {
-		// update data storage
-		let currentData = this.getById(id);
-		Object.assign(currentData, data);
-
-		let currentKey = this.#idToKey.get(id);
-		let newKey = positionKey(currentData.x, currentData.y);
-		if (currentKey != newKey) { // position changed
-			this.#keyToIds.get(currentKey).delete(id);
-			this.#addIdToSet(id, newKey);
-			this.#idToKey.set(id, newKey);
-		}
-	}
-
-	#addIdToSet(id, key) {
-		if (this.#keyToIds.has(key)) {
-			this.#keyToIds.get(key).add(id);
-		} else {
-			this.#keyToIds.set(key, new Set([id]));
-		}
-	}
-
-	delete(id) {
-		this.#idToData.delete(id);
-		let key = this.#idToKey.get(id);
-		this.#keyToIds.get(key).delete(id);
-		this.#idToKey.delete(id);
-	}
-}
-
 
 export default class RlDisplay extends HTMLElement {
-	#storage = new NodeStorage();
+	#storage = new Storage();
 	#canvas = document.createElement("div");
 	#canvasSize = [20, 10];
 
@@ -136,7 +87,7 @@ export default class RlDisplay extends HTMLElement {
 		let zIndex = options.zIndex || 0;
 
 		let existing = this.#storage.getIdByPosition(x, y, zIndex);
-		if (existing && existing != id) { console.log("deleting"); this.delete(existing); }
+		if (existing && existing != id) { this.delete(existing); }
 
 		let node;
 		let data = this.#storage.getById(id);
