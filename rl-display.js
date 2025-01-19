@@ -142,6 +142,10 @@ export default class RlDisplay extends HTMLElement {
 		}
 	}
 
+	clearAll() {
+		// FIXME
+	}
+
 	fx(id, effect) {
 		let record = this.#storage.getById(id);
 		// fixme if none

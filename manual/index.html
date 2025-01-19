@@ -120,7 +120,39 @@ return display;
 
 <h2>Part 3: canvas vs. port</h2>
 
-<h2>Part 4: depth</h2>
+<p>What is the resulting size of a &lt;rl-display&gt;? The render width (in pixels) can be computed by multiplying <code>--tile-width</code> by the <code>width</code> property (which specifies the number of characters, horizontally). However, game maps are often very large and it is not always possible to fit them on the screen. While you can reduce the font size (and therefore <code>--tile-width</code> and <code>--tile-height</code>) to make the display smaller, another approach is feasible as well: show only a subset of the large map.</p>
+
+<p>Rendering a subset can be done in a straightforward manner, by manually computing the set of visible coordinates and drawing using an offset. This approach works, but becomes more difficult once you decide to move your camera. To facilitate easier rendering of smaller map subsets, &lt;rl-display&gt; offers another approach: the panning viewport. Let's see how that works.</p>
+
+<p>When you adjust <code>display.width</code> and <code>--tile-width</code>, you are influencing the display's final width indirectly. However, you are free to set the CSS width for the &lt;rl-display&gt; element directly. Once you do that, you decouple what the user sees (the <em>viewport</em>, whose size is defined explicitly) and what is drawn on the <em>canvas</em> (individual characters rendered via <code>display.draw</code>). By default, the viewport is centered over the canvas. This can be changed using the <code>panTo</code> call:</p>
+
+<script type="application/x-ample">
+let utils = await import(`${location.href}utils.js`);
+let display = document.createElement("rl-display");
+yield display;
+
+utils.drawRectangle(display);
+display.draw(10, 5, {ch:"@", fg:"red"});
+
+display.style.setProperty("width", `${13*20}px`);
+display.style.setProperty("height", `${7*20}px`);
+
+while (true) {
+	await display.panTo(6, 3);
+	await utils.sleep(1000);
+	await display.panTo(13, 3);
+	await utils.sleep(1000);
+	await display.panTo(13, 6);
+	await utils.sleep(1000);
+	await display.panTo(6, 6);
+	await utils.sleep(1000);
+}
+
+// fixme speed
+</script>
+
+
+	<h2>Part 4: depth</h2>
 
 <h2>Part 5: effects</h2>
 
