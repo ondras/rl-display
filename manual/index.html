@@ -5,6 +5,8 @@
 	</head>
 	<body>
 <script type="application/x-ample">
+let utils = await import(`${location.href}utils.js`);
+
 let display = document.createElement("rl-display");
 for (let x=0;x<display.width;x++) {
 	for (let y=0;y<display.height;y++) {
@@ -18,16 +20,25 @@ for (let x=0;x<display.width;x++) {
 yield display;
 
 let pc = display.draw(5, 5, {ch:"@"});
-while (!signal.aborted) {
-	await sleep(1000);
+while (true) {
+	await utils.sleep(1000);
 	await display.move(pc, 4, 4);
-	await sleep(1000);
+	await utils.sleep(1000);
 	await display.move(pc, 3, 3);
 }
-
 </script>
 
 		<script type="module" src="../rl-display.js"></script>
-		<script type="module" src="index.js"></script>
+		<script type="module">
+			import XAmple from "https://cdn.jsdelivr.net/gh/ondras/x-ample/x-ample.js"
+
+			function createExamples() {
+				let selector = `script[type="application/x-ample"]`;
+				[...document.querySelectorAll(selector)].forEach(node => XAmple.replaceScript(node));
+			}
+
+			await customElements.whenDefined("rl-display");
+			createExamples();
+		</script>
 	</body>
 </html>
