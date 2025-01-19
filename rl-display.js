@@ -150,14 +150,11 @@ export default class RlDisplay extends HTMLElement {
 	}
 
 	connectedCallback() {
-		const { style, shadowRoot } = this;
+		const { shadowRoot } = this;
 
-		// apply css props
+		// frowards js->css props
 		this.width = this.width;
 		this.height = this.height;
-
-		style.setProperty("--tile-width", "20px");
-		style.setProperty("--tile-height", "20px");
 
 		shadowRoot.replaceChildren(
 			createStyle(PRIVATE_STYLE),
@@ -228,10 +225,12 @@ const PRIVATE_STYLE = `
 	align-items: center;
 	justify-content: center;
 	overflow: hidden;
-	background-color: #000;
 	font-family: monospace;
 	color: gray;
+	background-color: black;
 	user-select: none;
+	--tile-width: 20px;
+	--tile-height: 20px;
 }
 
 #canvas {
@@ -267,6 +266,6 @@ function updateVisual(node, visual) {
 	if (visual.ch) { node.textContent = visual.ch; }
 	let props = {};
 	if (visual.fg) { props.color = visual.fg; }
-	if (visual.bg) { props.backgroundColor = visual.bg; }
+	if (visual.bg) { props["background-color"] = visual.bg; }
 	updateProperties(node, props);
 }

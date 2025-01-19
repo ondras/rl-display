@@ -2,8 +2,130 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
+		<title>&lt;rl-display&gt; manual</title>
+		<link rel="stylesheet" href="index.css" />
 	</head>
 	<body>
+
+<h1>&lt;rl-display&gt; manual</h1>
+
+<p>This page documents and demonstrates the &lt;rl-display&gt; web component. Its main goal is to provide a modern and aesthetically pleasing tty-like renderer, suitable for Roguelike games. &lt;rl-display&gt; remains true to the web platform, rendering individual glyphs via HTML DOM. This allows for CSS-based styling and the application of Web Animations for smoother visual experience.</p>
+
+<p>All examples on this page are interactive; you can click and edit them as necessary. They are powered by the <a href="https://github.com/ondras/x-ample">&lt;x-ample&gt;</a> web component. Additional information:</p>
+<ul>
+	<li>Some examples use additional library code loaded from <a href="utils.js">utils.js</a>.</li>
+	<li>Example code is wrapped inside an asynchronous generator. To display values from an example code, use the <code>yield</code> keyword.</li>
+</ul>
+
+<h2>Part 1: basic drawing</h2>
+
+<p>Once you link the &lt;rl-display&gt; library to your HTML page, you can start using the corresponding HTML tag. Its instance can be created in three ways:</p>
+<ol>
+	<li>Via HTML markup</li>
+	<li>Via JavaScript instantiation (<code>new</code> operator)</li>
+	<li>Via JavaScript <code>document.createElement</code> call</li>
+</ol>
+<p>Manipulating the display is performed with JS calls, so it makes most sense to create the display via JavaScript as well. Let's create a display and draw some characters inside:</p>
+
+<script type="application/x-ample">
+let display = document.createElement("rl-display");
+
+display.draw(8, 6, {ch:"@", fg:"red"});
+display.draw(10, 5, {ch:"$", fg:"goldenrod"});
+display.draw(12, 7, {ch:"g", fg:"lime"});
+
+return display;
+</script>
+
+<p>The <code>draw</code> method is the main device for displaying stuff. Every call displays one character at a position given by two coordinates (x and y). The second argument is an object used to configure the visual properties. It might contain:</p>
+
+<ul>
+	<li><code>ch</code> &ndash; the character being drawn</li>
+	<li><code>fg</code> &ndash; foreground (text) color</li>
+	<li><code>bg</code> &ndash; background color</li>
+</ul>
+
+<p>These properties are optional. The foreground color defaults to gray and the background is transparent (so you see the black background color of the display itself). Let's fill the display with dots on a random background:</p>
+
+<script type="application/x-ample">
+let display = document.createElement("rl-display");
+
+for (let i=0; i<display.width; i++) {
+	for (let j=0; j<display.height; j++) {
+		let bg = (Math.random() > 0.5 ? "#222" : "#444");
+		display.draw(i, j, {ch:".", bg});
+	}
+}
+
+return display;
+</script>
+
+<h2>Part 2: styling and configuration</h2>
+
+<p>Since &lt;rl-display&gt; is an HTML element and uses other HTML elements to show stuff, the primary device for styling is CSS. Some properties, however, are configured via JavaScript. In the example above, we see the <code>width</code> and <code>height</code> properties being used to retrieve the display's size <em>in characters</em>. We can use these properties to change the size as well:</p>
+
+<script type="application/x-ample">
+let d1 = document.createElement("rl-display");
+let d2 = document.createElement("rl-display");
+let d3 = document.createElement("rl-display");
+
+d1.width = d1.height = 3;
+d2.width = d2.height = 5;
+d3.width = d3.height = 10;
+
+let fragment = document.createDocumentFragment();
+fragment.append(d1, " ", d2, " ", d3);
+return fragment;
+</script>
+
+<p>Primary CSS properties used to adjust the display are:</p>
+
+<ul>
+	<li><code>display</code> &ndash; the default is <em>inline-flex</em>
+	<li><code>background-color</code> &ndash; the default is <em>black</em>
+	<li><code>color</code> &ndash; the default is <em>gray</em>
+	<li><code>font-family</code> &ndash; the default is <em>monospace</em>
+</ul>
+
+<p>Let's try customizing these:</p>
+
+<script type="application/x-ample">
+let display = document.createElement("rl-display");
+display.draw(10, 5, {ch:"@"});
+
+display.style.color = "hotpink";
+display.style.backgroundColor = "olivedrab";
+display.style.fontFamily = "serif";
+
+return display;
+</script>
+
+<p>Finally, to specify the <em>size</em> of individual characters, we use two custom CSS properties:</p>
+
+<ul>
+	<li><code>--tile-width</code> specifies the horizontal pitch</em>
+	<li><code>--tile-height</code> specifies the vertical pitch as well as the font size</em>
+</ul>
+
+<script type="application/x-ample">
+let display = document.createElement("rl-display");
+display.width = display.height = 3;
+display.draw(1, 1, {ch:"@", fg:"lime"});
+
+display.style.setProperty("--tile-width", "20px");
+display.style.setProperty("--tile-height", "30px");
+
+return display;
+</script>
+
+<h2>Part 3: canvas vs. port</h2>
+
+<h2>Part 4: depth</h2>
+
+<h2>Part 5: effects</h2>
+
+<h2>Part 6: additional features</h2>
+
 <script type="application/x-ample">
 let utils = await import(`${location.href}utils.js`);
 
@@ -28,17 +150,17 @@ while (true) {
 }
 </script>
 
-		<script type="module" src="../rl-display.js"></script>
-		<script type="module">
-			import XAmple from "https://cdn.jsdelivr.net/gh/ondras/x-ample/x-ample.js"
+<script type="module" src="../rl-display.js"></script>
+<script type="module">
+	import XAmple from "https://cdn.jsdelivr.net/gh/ondras/x-ample/x-ample.js"
 
-			function createExamples() {
-				let selector = `script[type="application/x-ample"]`;
-				[...document.querySelectorAll(selector)].forEach(node => XAmple.replaceScript(node));
-			}
+	function createExamples() {
+		let selector = `script[type="application/x-ample"]`;
+		[...document.querySelectorAll(selector)].forEach(node => XAmple.replaceScript(node));
+	}
 
-			await customElements.whenDefined("rl-display");
-			createExamples();
-		</script>
+	await customElements.whenDefined("rl-display");
+	createExamples();
+</script>
 	</body>
 </html>
