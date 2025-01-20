@@ -9,6 +9,8 @@
 
 <h1>&lt;rl-display&gt; manual</h1>
 
+<t-o-c selector="body > h2, body > h3"><h3>Table of Contents</h3></t-o-c>
+
 <p>This page documents and demonstrates the &lt;rl-display&gt; web component. Its main goal is to provide a modern and aesthetically pleasing tty-like renderer, suitable for Roguelike games. &lt;rl-display&gt; remains true to the web platform, rendering individual glyphs via HTML DOM. This allows for CSS-based styling and the application of Web Animations for smoother visual experience.</p>
 
 <p>All examples on this page are interactive; you can click and edit them as necessary. They are powered by the <a href="https://github.com/ondras/x-ample">&lt;x-ample&gt;</a> web component. Additional information:</p>
@@ -45,7 +47,7 @@ return display;
 	<li><code>bg</code> &ndash; background color</li>
 </ul>
 
-<p>These properties are optional. The foreground color defaults to gray and the background is transparent (so you see the black background color of the display itself). Let's fill the display with dots on a random background:</p>
+<p>These properties are optional. The foreground color defaults to gray and the background is transparent (so you see the black background color of the display itself). Let's fill the display with <a href="https://en.wikipedia.org/wiki/Interpunct">mid-dots</a> on a random background:</p>
 
 <script type="application/x-ample">
 let display = document.createElement("rl-display");
@@ -53,7 +55,7 @@ let display = document.createElement("rl-display");
 for (let i=0; i<display.width; i++) {
 	for (let j=0; j<display.height; j++) {
 		let bg = (Math.random() > 0.5 ? "#222" : "#444");
-		display.draw(i, j, {ch:".", bg});
+		display.draw(i, j, {ch:"·", bg});
 	}
 }
 
@@ -182,9 +184,10 @@ while (true) {
 }
 </script>
 
+<script type="module" src="./t-o-c.js"></script>
 <script type="module" src="../rl-display.js"></script>
 <script type="module">
-	import XAmple from "https://cdn.jsdelivr.net/gh/ondras/x-ample/x-ample.js"
+	import XAmple from "https://cdn.jsdelivr.net/gh/ondras/x-ample@master/x-ample.js"
 
 	function createExamples() {
 		let selector = `script[type="application/x-ample"]`;
