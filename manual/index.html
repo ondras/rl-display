@@ -153,7 +153,7 @@ while (true) {
 // fixme speed
 </script>
 
-<p>The arguments passed to `panTo` are display coordinates of the canvas character that shall be centered inside the viewport. It is possible to reset the viewport pan back to the canvas center using `panToCenter`:</p>
+<p>The arguments passed to <code>panTo</code> are display coordinates of the canvas character that shall be centered inside the viewport. It is possible to reset the viewport pan back to the canvas center using <code>panToCenter</code>:</p>
 
 <script type="application/x-ample">
 let utils = await import(`${location.href}utils.js`);
@@ -176,7 +176,7 @@ while (true) {
 }
 </script>
 
-<p>The &lt;rl-display&gt; element now behaves similarly to a regular web map. The last step to make the panning process even more fancy is to introduce <em>zooming</em>. Instead of drawing larger characters, we can temporarily scale up the whole display with the `scaleTo` method:</p>
+<p>The &lt;rl-display&gt; element now behaves similarly to a regular web map. The last step to make the panning process even more fancy is to introduce <em>zooming</em>. Instead of drawing larger characters, we can temporarily scale up the whole display with the <code>scaleTo</code> method:</p>
 
 <script type="application/x-ample">
 let utils = await import(`${location.href}utils.js`);
@@ -198,7 +198,7 @@ while (true) {
 }
 </script>
 
-<p>Scaling uses a single numeric argument that specifies the final scaling ratio, one being the default zoom (where the characters are drawn at the size specified via <code>--tile-height</code>). Note that scaling maintains the viewport-to-canvas mapping established by the last `panTo` call.</p>
+<p>Scaling uses a single numeric argument that specifies the final scaling ratio, one being the default zoom (where the characters are drawn at the size specified via <code>--tile-height</code>). Note that scaling maintains the viewport-to-canvas mapping established by the last <code>panTo</code> call.</p>
 
 <p>Panning and scaling is animated and therefore asynchronous. These methods are returning <em>Promises</em>, so in order to combine panning and scaling, it can be useful to combine the retured values with <code>Promise.all</code>:</p>
 
@@ -228,11 +228,100 @@ while (true) {
 }
 </script>
 
-<h2>Part 4: depth</h2>
+<h2>Part 4: effects</h2>
 
-<h2>Part 5: effects</h2>
+<p>It is possible to apply various visual effects to glyphs drawn into the display. To do that, we need a way to refer to individual characters &ndash; a unique identifier. There are two ways to do that:</p>
 
-<h2>Part 6: additional features</h2>
+<ol>
+	<li>Specify an <code>id</code> as a part of an optional (fourth) configuration object passed to the <code>draw()</code> method.</li>
+	<li>Let the display generate a unique <code>id</code> as a return value from the <code>draw()</code> call.</li>
+</ol>
+
+<p>Let's test both approaches with the most basic effect, the <code>move()</code> function:</p>
+
+<script type="application/x-ample">
+let utils = await import(`${location.href}utils.js`);
+
+let display = document.createElement("rl-display");
+yield display;
+
+display.draw(5, 5, {ch:"@", fg:"red"}, {id:"player"});
+let goblin = display.draw(7, 3, {ch:"g", fg:"lime"});
+
+while (true) {
+	await utils.sleep(1000);
+	await Promise.all([
+		display.move("player", 5, 3),
+		display.move(goblin, 7, 5)
+	]);
+
+	await utils.sleep(1000);
+	await Promise.all([
+		display.move("player", 5, 5),
+		display.move(goblin, 7, 3)
+	]);
+}
+</script>
+
+<p>The <code>move()</code> method needs an <code>id</code> and target coordinates (any JS value can be used as an <code>id</code>). It is asynchronous and returns a Promise.</p>
+
+<p>A more generic <code>fx()</code> method is provided as well as a set of built-in animations suitable for various effects. To specify a particular animation, use a pre-defined string (we will see these in a moment) or a standard keyframe definition suitable for the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element/animate">Element.prototype.animate()</a> method. These are the strings available:</p>
+
+<ul>
+	<li><code>"fade-in"</code></li>
+	<li><code>"fade-out"</code></li>
+	<li><code>"pulse"</code></li>
+</ul>
+
+<p>Let's see them in action:</p>
+
+<script type="application/x-ample">
+let utils = await import(`${location.href}utils.js`);
+
+let display = document.createElement("rl-display");
+display.draw(10, 5, {ch:"@", fg:"cyan"}, {id:"player"});
+
+let fragment = document.createDocumentFragment();
+let buttons = ["fade-in", "fade-out", "pulse"].map(fx => {
+	let button = document.createElement("button");
+	button.textContent = fx;
+	button.onclick = () => display.fx("player", fx);
+	return button;
+})
+
+let br = document.createElement("br");
+fragment.append(display, br, ...buttons);
+
+return fragment;
+</script>
+
+<p>The value returned from the <code>fx()</code> method is an instance of the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Animation">Animation class</a>. You can use it, for example, to wait for the completion (via its <code>finished</code> property) or to cancel a long-running animation (via its <code>cancel()</code> method). Let's test this along with a custom animation definition:</p>
+
+<script type="application/x-ample">
+let utils = await import(`${location.href}utils.js`);
+
+let display = document.createElement("rl-display");
+yield display;
+
+let money = display.draw(10, 5, {ch:"$", fg:"goldenrod"});
+let keyframes = {
+	rotate: ["0deg", "30deg", "-50deg", "180deg"]
+}
+
+while (1) {
+	let animation = display.fx(money, keyframes, 1000);
+	await animation.finished;
+	await utils.sleep(1000);
+}
+</script>
+
+<p>The last (third) argument to <code>fx()</code> is the animation's duration. Timing of various animated activities is explained in more detail in the following chapter.</p>
+
+<h2>Part 5: timing</h2>
+
+<h2>Part 6: depth and composition</h2>
+
+<h2>Part 7: additional features</h2>
 
 <script type="application/x-ample">
 let utils = await import(`${location.href}utils.js`);

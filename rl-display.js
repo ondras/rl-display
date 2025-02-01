@@ -8,12 +8,12 @@ const EFFECTS = {
 		},
 		options: 500
 	},
-	"fadein": {
+	"fade-in": {
 		keyframes: { opacity: [0, 1]},
 		options: 300
 	},
 
-	"fadeout": {
+	"fade-out": {
 		keyframes: { opacity: [1, 0]},
 		options: 300
 	},
@@ -27,6 +27,9 @@ const EFFECTS = {
 }
 
 
+/**
+ * The <rl-display> Custom Element. Uses Shadow DOM, contents are not visible. To show stuff, use its JS API.
+ */
 export default class RlDisplay extends HTMLElement {
 	#storage = new Storage();
 	#canvas = document.createElement("div");
@@ -70,8 +73,8 @@ export default class RlDisplay extends HTMLElement {
 	panTo(x, y) {
 		const { cols, rows } = this;
 		let props = {
-			"--pan-dx": cols/2 - (x + 0.5),
-			"--pan-dy": rows/2 - (y + 0.5)
+			"--pan-dx": (cols-1)/2 - x,
+			"--pan-dy": (rows-1)/2 - y
 		}
 		let a = this.animate([props], {duration:100, fill:"both"});
 		return waitAndCommit(a);
@@ -79,7 +82,7 @@ export default class RlDisplay extends HTMLElement {
 
 	panToCenter() {
 		const { cols, rows } = this;
-		return this.panTo(cols/2 - 0.5, rows/2 - 0.5);
+		return this.panTo((cols-1)/2, (rows-1)/2);
 	}
 
 	draw(x, y, visual, options={}) {
@@ -146,11 +149,14 @@ export default class RlDisplay extends HTMLElement {
 		// FIXME
 	}
 
-	fx(id, effect) {
+	fx(id, keyframes, options) {
 		let record = this.#storage.getById(id);
 		// fixme if none
-		let fx = EFFECTS[effect];
-		return record.node.animate(fx.keyframes, fx.options);
+		if (typeof(keyframes) == "string") {
+			options = options || EFFECTS[keyframes].options;
+			keyframes = EFFECTS[keyframes].keyframes;
+		}
+		return record.node.animate(keyframes, options);
 	}
 
 	connectedCallback() {
