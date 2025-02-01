@@ -126,7 +126,7 @@ return display;
 
 <p>Rendering a subset can be done in a straightforward manner, by manually computing the set of visible coordinates and drawing using an offset. This approach works, but becomes more difficult once you decide to move your camera. To facilitate easier rendering of smaller map subsets, &lt;rl-display&gt; offers another approach: the panning viewport. Let's see how that works.</p>
 
-<p>When you adjust <code>display.cols</code> and <code>--tile-width</code>, you are influencing the display's final width indirectly. However, you are free to set the CSS width for the &lt;rl-display&gt; element directly. Once you do that, you decouple what the user sees (the <em>viewport</em>, whose size is defined explicitly) and what is drawn on the <em>canvas</em> (individual characters rendered via <code>display.draw</code>). By default, the viewport is centered over the canvas. This can be changed using the <code>panTo</code> call:</p>
+<p>When you adjust <code>display.cols</code> and <code>--tile-width</code>, you are influencing the display's final width indirectly. However, you are free to set the CSS width for the &lt;rl-display&gt; element directly. Once you do that, you decouple what the user sees (the <em>viewport</em>, whose size is defined explicitly) and what is drawn on the <em>canvas</em> (individual characters rendered via <code>display.draw</code>). Most frequently, the viewport is smaller than the canvas, resulting in an <em>overflow</em> (which can be typically observed on a &lt;textarea&gt; HTML element with fixed size). By default, the viewport is centered over the canvas. This can be changed using the <code>panTo</code> call:</p>
 
 <script type="application/x-ample">
 let utils = await import(`${location.href}utils.js`);
@@ -153,8 +153,82 @@ while (true) {
 // fixme speed
 </script>
 
+<p>The arguments passed to `panTo` are display coordinates of the canvas character that shall be centered inside the viewport. It is possible to reset the viewport pan back to the canvas center using `panToCenter`:</p>
 
-	<h2>Part 4: depth</h2>
+<script type="application/x-ample">
+let utils = await import(`${location.href}utils.js`);
+let display = document.createElement("rl-display");
+yield display;
+
+utils.drawRectangle(display);
+display.cols = 21;
+display.rows = 11;
+display.draw(10, 5, {ch:"@", fg:"red"});
+
+display.style.setProperty("width", `${13*20}px`);
+display.style.setProperty("height", `${7*20}px`);
+
+while (true) {
+	await display.panTo(6, 3);
+	await utils.sleep(1000);
+	await display.panToCenter();
+	await utils.sleep(1000);
+}
+</script>
+
+<p>The &lt;rl-display&gt; element now behaves similarly to a regular web map. The last step to make the panning process even more fancy is to introduce <em>zooming</em>. Instead of drawing larger characters, we can temporarily scale up the whole display with the `scaleTo` method:</p>
+
+<script type="application/x-ample">
+let utils = await import(`${location.href}utils.js`);
+let display = document.createElement("rl-display");
+yield display;
+
+utils.drawRectangle(display);
+display.style.setProperty("width", `${13*20}px`);
+display.style.setProperty("height", `${7*20}px`);
+
+display.draw(10, 5, {ch:"@", fg:"red"});
+await display.panTo(10, 5);
+
+while (true) {
+	await utils.sleep(1000);
+	await display.scaleTo(3);
+	await utils.sleep(1000);
+	await display.scaleTo(1);
+}
+</script>
+
+<p>Scaling uses a single numeric argument that specifies the final scaling ratio, one being the default zoom (where the characters are drawn at the size specified via <code>--tile-height</code>). Note that scaling maintains the viewport-to-canvas mapping established by the last `panTo` call.</p>
+
+<p>Panning and scaling is animated and therefore asynchronous. These methods are returning <em>Promises</em>, so in order to combine panning and scaling, it can be useful to combine the retured values with <code>Promise.all</code>:</p>
+
+<script type="application/x-ample">
+let utils = await import(`${location.href}utils.js`);
+let display = document.createElement("rl-display");
+yield display;
+
+utils.drawRectangle(display);
+display.style.setProperty("width", `${13*20}px`);
+display.style.setProperty("height", `${7*20}px`);
+
+display.draw(12, 6, {ch:"@", fg:"red"});
+
+while (true) {
+	await Promise.all([
+		display.panTo(12, 6),
+		display.scaleTo(3)
+	]);
+	await utils.sleep(1000);
+
+	await Promise.all([
+		display.panTo(6, 3),
+		display.scaleTo(1)
+	]);
+	await utils.sleep(1000);
+}
+</script>
+
+<h2>Part 4: depth</h2>
 
 <h2>Part 5: effects</h2>
 
