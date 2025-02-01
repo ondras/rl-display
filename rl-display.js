@@ -50,16 +50,16 @@ export default class RlDisplay extends HTMLElement {
 		this.#canvas.id = "canvas";
 	}
 
-	get width() { return this.#canvasSize[0]; }
-	set width(width) {
-		this.#canvasSize[0] = width;
-		this.style.setProperty("--canvas-width", width);
+	get cols() { return this.#canvasSize[0]; }
+	set cols(cols) {
+		this.#canvasSize[0] = cols;
+		this.style.setProperty("--canvas-width", cols);
 	}
 
-	get height() { return this.#canvasSize[1]; }
-	set height(height) {
-		this.#canvasSize[1] = height;
-		this.style.setProperty("--canvas-height", height);
+	get rows() { return this.#canvasSize[1]; }
+	set rows(rows) {
+		this.#canvasSize[1] = rows;
+		this.style.setProperty("--canvas-height", rows);
 	}
 
 	scaleTo(scale) {
@@ -68,18 +68,18 @@ export default class RlDisplay extends HTMLElement {
 	}
 
 	panTo(x, y) {
-		const { width, height } = this;
+		const { cols, rows } = this;
 		let props = {
-			"--pan-dx": width/2 - (x + 0.5),
-			"--pan-dy": height/2 - (y + 0.5)
+			"--pan-dx": cols/2 - (x + 0.5),
+			"--pan-dy": rows/2 - (y + 0.5)
 		}
 		let a = this.animate([props], {duration:100, fill:"both"});
 		return waitAndCommit(a);
 	}
 
 	panToCenter() {
-		const { width, height } = this;
-		return this.panTo(width/2 - 0.5, height/2 - 0.5);
+		const { cols, rows } = this;
+		return this.panTo(cols/2 - 0.5, rows/2 - 0.5);
 	}
 
 	draw(x, y, visual, options={}) {
@@ -157,8 +157,8 @@ export default class RlDisplay extends HTMLElement {
 		const { shadowRoot } = this;
 
 		// frowards js->css props
-		this.width = this.width;
-		this.height = this.height;
+		this.cols = this.cols;
+		this.rows = this.rows;
 
 		shadowRoot.replaceChildren(
 			createStyle(PRIVATE_STYLE),

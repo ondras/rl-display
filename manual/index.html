@@ -9,8 +9,6 @@
 
 <h1>&lt;rl-display&gt; manual</h1>
 
-<t-o-c selector="body > h2, body > h3"><h3>Table of Contents</h3></t-o-c>
-
 <p>This page documents and demonstrates the &lt;rl-display&gt; web component. Its main goal is to provide a modern and aesthetically pleasing tty-like renderer, suitable for Roguelike games. &lt;rl-display&gt; remains true to the web platform, rendering individual glyphs via HTML DOM. This allows for CSS-based styling and the application of Web Animations for smoother visual experience.</p>
 
 <p>All examples on this page are interactive; you can click and edit them as necessary. They are powered by the <a href="https://github.com/ondras/x-ample">&lt;x-ample&gt;</a> web component. Additional information:</p>
@@ -18,6 +16,8 @@
 	<li>Some examples use additional library code loaded from <a href="utils.js">utils.js</a>.</li>
 	<li>Example code is wrapped inside an asynchronous generator. To display values from an example code, use the <code>yield</code> keyword.</li>
 </ul>
+
+<t-o-c selector="body > h2, body > h3"><h3>Table of Contents</h3></t-o-c>
 
 <h2>Part 1: basic drawing</h2>
 
@@ -52,8 +52,8 @@ return display;
 <script type="application/x-ample">
 let display = document.createElement("rl-display");
 
-for (let i=0; i<display.width; i++) {
-	for (let j=0; j<display.height; j++) {
+for (let i=0; i<display.cols; i++) {
+	for (let j=0; j<display.rows; j++) {
 		let bg = (Math.random() > 0.5 ? "#222" : "#444");
 		display.draw(i, j, {ch:"·", bg});
 	}
@@ -64,16 +64,16 @@ return display;
 
 <h2>Part 2: styling and configuration</h2>
 
-<p>Since &lt;rl-display&gt; is an HTML element and uses other HTML elements to show stuff, the primary device for styling is CSS. Some properties, however, are configured via JavaScript. In the example above, we see the <code>width</code> and <code>height</code> properties being used to retrieve the display's size <em>in characters</em>. We can use these properties to change the size as well:</p>
+<p>Since &lt;rl-display&gt; is an HTML element and uses other HTML elements to show stuff, the primary device for styling is CSS. Some properties, however, are configured via JavaScript. In the example above, we see the <code>cols</code> and <code>rows</code> properties being used to retrieve the display's size <em>in characters</em>. We can use these properties to change the size as well:</p>
 
 <script type="application/x-ample">
 let d1 = document.createElement("rl-display");
 let d2 = document.createElement("rl-display");
 let d3 = document.createElement("rl-display");
 
-d1.width = d1.height = 3;
-d2.width = d2.height = 5;
-d3.width = d3.height = 10;
+d1.cols = d1.rows = 3;
+d2.cols = d2.rows = 5;
+d3.cols = d3.rows = 10;
 
 let fragment = document.createDocumentFragment();
 fragment.append(d1, " ", d2, " ", d3);
@@ -111,7 +111,7 @@ return display;
 
 <script type="application/x-ample">
 let display = document.createElement("rl-display");
-display.width = display.height = 3;
+display.cols = display.rows = 3;
 display.draw(1, 1, {ch:"@", fg:"lime"});
 
 display.style.setProperty("--tile-width", "20px");
@@ -122,11 +122,11 @@ return display;
 
 <h2>Part 3: canvas vs. port</h2>
 
-<p>What is the resulting size of a &lt;rl-display&gt;? The render width (in pixels) can be computed by multiplying <code>--tile-width</code> by the <code>width</code> property (which specifies the number of characters, horizontally). However, game maps are often very large and it is not always possible to fit them on the screen. While you can reduce the font size (and therefore <code>--tile-width</code> and <code>--tile-height</code>) to make the display smaller, another approach is feasible as well: show only a subset of the large map.</p>
+<p>What is the resulting size of a &lt;rl-display&gt;? The render width (in pixels) can be computed by multiplying <code>--tile-width</code> by the <code>cols</code> property (which specifies the number of characters, horizontally). However, game maps are often very large and it is not always possible to fit them on the screen. While you can reduce the font size (and therefore <code>--tile-width</code> and <code>--tile-height</code>) to make the display smaller, another approach is feasible as well: show only a subset of the large map.</p>
 
 <p>Rendering a subset can be done in a straightforward manner, by manually computing the set of visible coordinates and drawing using an offset. This approach works, but becomes more difficult once you decide to move your camera. To facilitate easier rendering of smaller map subsets, &lt;rl-display&gt; offers another approach: the panning viewport. Let's see how that works.</p>
 
-<p>When you adjust <code>display.width</code> and <code>--tile-width</code>, you are influencing the display's final width indirectly. However, you are free to set the CSS width for the &lt;rl-display&gt; element directly. Once you do that, you decouple what the user sees (the <em>viewport</em>, whose size is defined explicitly) and what is drawn on the <em>canvas</em> (individual characters rendered via <code>display.draw</code>). By default, the viewport is centered over the canvas. This can be changed using the <code>panTo</code> call:</p>
+<p>When you adjust <code>display.cols</code> and <code>--tile-width</code>, you are influencing the display's final width indirectly. However, you are free to set the CSS width for the &lt;rl-display&gt; element directly. Once you do that, you decouple what the user sees (the <em>viewport</em>, whose size is defined explicitly) and what is drawn on the <em>canvas</em> (individual characters rendered via <code>display.draw</code>). By default, the viewport is centered over the canvas. This can be changed using the <code>panTo</code> call:</p>
 
 <script type="application/x-ample">
 let utils = await import(`${location.href}utils.js`);
@@ -164,10 +164,10 @@ while (true) {
 let utils = await import(`${location.href}utils.js`);
 
 let display = document.createElement("rl-display");
-for (let x=0;x<display.width;x++) {
-	for (let y=0;y<display.height;y++) {
-		let in_x = x * (display.width-1-x);
-		let in_y = y * (display.height-1-y);
+for (let x=0;x<display.cols;x++) {
+	for (let y=0;y<display.rows;y++) {
+		let in_x = x * (display.cols-1-x);
+		let in_y = y * (display.rows-1-y);
 		let ch = in_x && in_y ? "." : "#";
 		display.draw(x, y, {ch});
 	}

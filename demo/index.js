@@ -19,9 +19,9 @@ let display = document.querySelector("rl-display");
 let position = [5, 5];
 let id = display.draw(...position, {ch:"@", fg:"red"}, {zIndex:1});
 
-for (let x=0;x<display.width;x++) {
-	for (let y=0;y<display.height;y++) {
-		if (x > 0 && x < display.width-1 && y > 0 && y < display.height-1) continue;
+for (let x=0;x<display.cols;x++) {
+	for (let y=0;y<display.rows;y++) {
+		if (x > 0 && x < display.cols-1 && y > 0 && y < display.rows-1) continue;
 		display.draw(x, y, {ch:"#"});
 	}
 }

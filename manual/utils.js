@@ -3,10 +3,10 @@ export function sleep(ms) {
 }
 
 export function drawRectangle(display) {
-	for (let x=0;x<display.width;x++) {
-		for (let y=0;y<display.height;y++) {
-			let in_x = x * (display.width-1-x);
-			let in_y = y * (display.height-1-y);
+	for (let x=0;x<display.cols;x++) {
+		for (let y=0;y<display.rows;y++) {
+			let in_x = x * (display.cols-1-x);
+			let in_y = y * (display.rows-1-y);
 			let ch = in_x && in_y ? "." : "#";
 			display.draw(x, y, {ch});
 		}
