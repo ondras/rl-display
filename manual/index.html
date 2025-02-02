@@ -5,14 +5,14 @@
 		<title>&lt;rl-display&gt; manual</title>
 		<link rel="stylesheet" id="ss-example" href="example.css" />
 		<link rel="stylesheet" id="ss-manual" href="index.css" />
-		<link rel="stylesheet" id="ss-hljs" crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/stackoverflow-light.min.css" />
+		<link rel="stylesheet" id="ss-hljs" crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/base16/dirtysea.min.css" />
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 	</head>
 	<body>
 
-<h1>&lt;rl-display&gt; manual</h1>
+<h1>&lt;rl‑display&gt; manual</h1>
 
-<p>This page documents and demonstrates the &lt;rl-display&gt; web component. Its main goal is to provide a modern and aesthetically pleasing tty-like renderer, suitable for Roguelike games. &lt;rl-display&gt; remains true to the web platform, rendering individual glyphs via HTML DOM. This allows for CSS-based styling and the application of Web Animations for smoother visual experience.</p>
+<p>This page documents and demonstrates the &lt;rl‑display&gt; web component. Its main goal is to provide a modern and aesthetically pleasing TTY-like renderer, suitable for Roguelike games. &lt;rl‑display&gt; remains true to the web platform, rendering individual glyphs via HTML DOM. This allows for CSS-based styling and the application of Web Animations for smoother visual experience.</p>
 
 <p>All examples on this page are interactive; you can click and edit them as necessary. They are powered by the <a href="https://github.com/ondras/x-ample">&lt;x-ample&gt;</a> web component. Additional information:</p>
 <ul>
@@ -22,9 +22,9 @@
 
 <t-o-c selector="body > h2, body > h3"><h3>Table of Contents</h3></t-o-c>
 
-<h2>Part 1: basic drawing</h2>
+<h2 id="basic-drawing">Part 1: basic drawing</h2>
 
-<p>Once you link the &lt;rl-display&gt; library to your HTML page, you can start using the corresponding HTML tag. Its instance can be created in three ways:</p>
+<p>Once you link the &lt;rl‑display&gt; library to your HTML page, you can start using the corresponding HTML tag. Its instance can be created in three ways:</p>
 <ol>
 	<li>Via HTML markup</li>
 	<li>Via JavaScript instantiation (<code>new</code> operator)</li>
@@ -65,9 +65,9 @@ for (let i=0; i<display.cols; i++) {
 return display;
 </script>
 
-<h2>Part 2: styling and configuration</h2>
+<h2 id="styling-and-configuration">Part 2: styling and configuration</h2>
 
-<p>Since &lt;rl-display&gt; is an HTML element and uses other HTML elements to show stuff, the primary device for styling is CSS. Some properties, however, are configured via JavaScript. In the example above, we see the <code>cols</code> and <code>rows</code> properties being used to retrieve the display's size <em>in characters</em>. We can use these properties to change the size as well:</p>
+<p>Since &lt;rl‑display&gt; is an HTML element and uses other HTML elements to show stuff, the primary device for styling is CSS. Some properties, however, are configured via JavaScript. In the example above, we see the <code>cols</code> and <code>rows</code> properties being used to retrieve the display's size <em>in characters</em>. We can use these properties to change the size as well:</p>
 
 <script type="application/x-ample">
 let d1 = document.createElement("rl-display");
@@ -123,16 +123,16 @@ display.style.setProperty("--tile-height", "30px");
 return display;
 </script>
 
-<h2>Part 3: canvas vs. port</h2>
+<h2 id="canvas-vs-port">Part 3: canvas vs. port</h2>
 
-<p>What is the resulting size of a &lt;rl-display&gt;? The render width (in pixels) can be computed by multiplying <code>--tile-width</code> by the <code>cols</code> property (which specifies the number of characters, horizontally). However, game maps are often very large and it is not always possible to fit them on the screen. While you can reduce the font size (and therefore <code>--tile-width</code> and <code>--tile-height</code>) to make the display smaller, another approach is feasible as well: show only a subset of the large map.</p>
+<p>What is the resulting size of a &lt;rl‑display&gt;? The render width (in pixels) can be computed by multiplying <code>--tile-width</code> by the <code>cols</code> property (which specifies the number of characters, horizontally). However, game maps are often very large and it is not always possible to fit them on the screen. While you can reduce the font size (and therefore <code>--tile-width</code> and <code>--tile-height</code>) to make the display smaller, another approach is feasible as well: show only a subset of the large map.</p>
 
-<p>Rendering a subset can be done in a straightforward manner, by manually computing the set of visible coordinates and drawing using an offset. This approach works, but becomes more difficult once you decide to move your camera. To facilitate easier rendering of smaller map subsets, &lt;rl-display&gt; offers another approach: the panning viewport. Let's see how that works.</p>
+<p>Rendering a subset can be done in a straightforward manner, by manually computing the set of visible coordinates and drawing using an offset. This approach works, but becomes more difficult once you decide to move your camera. To facilitate easier rendering of smaller map subsets, &lt;rl‑display&gt; offers another approach: the panning viewport. Let's see how that works.</p>
 
-<p>When you adjust <code>display.cols</code> and <code>--tile-width</code>, you are influencing the display's final width indirectly. However, you are free to set the CSS width for the &lt;rl-display&gt; element directly. Once you do that, you decouple what the user sees (the <em>viewport</em>, whose size is defined explicitly) and what is drawn on the <em>canvas</em> (individual characters rendered via <code>display.draw</code>). Most frequently, the viewport is smaller than the canvas, resulting in an <em>overflow</em> (which can be typically observed on a &lt;textarea&gt; HTML element with fixed size). By default, the viewport is centered over the canvas. This can be changed using the <code>panTo</code> call:</p>
+<p>When you adjust <code>display.cols</code> and <code>--tile-width</code>, you are influencing the display's final width indirectly. However, you are free to set the CSS width for the &lt;rl‑display&gt; element directly. Once you do that, you decouple what the user sees (the <em>viewport</em>, whose size is defined explicitly) and what is drawn on the <em>canvas</em> (individual characters rendered via <code>display.draw</code>). Most frequently, the viewport is smaller than the canvas, resulting in an <em>overflow</em> (which can be typically observed on a &lt;textarea&gt; HTML element with fixed size). By default, the viewport is centered over the canvas. This can be changed using the <code>panTo</code> call:</p>
 
 <script type="application/x-ample">
-let utils = await import(`${location.href}utils.js`);
+let utils = await import(new URL("utils.js", location));
 let display = document.createElement("rl-display");
 yield display;
 
@@ -152,14 +152,12 @@ while (true) {
 	await display.panTo(6, 6);
 	await utils.sleep(1000);
 }
-
-// fixme speed
 </script>
 
 <p>The arguments passed to <code>panTo</code> are display coordinates of the canvas character that shall be centered inside the viewport. It is possible to reset the viewport pan back to the canvas center using <code>panToCenter</code>:</p>
 
 <script type="application/x-ample">
-let utils = await import(`${location.href}utils.js`);
+let utils = await import(new URL("utils.js", location));
 let display = document.createElement("rl-display");
 yield display;
 
@@ -179,10 +177,10 @@ while (true) {
 }
 </script>
 
-<p>The &lt;rl-display&gt; element now behaves similarly to a regular web map. The last step to make the panning process even more fancy is to introduce <em>zooming</em>. Instead of drawing larger characters, we can temporarily scale up the whole display with the <code>scaleTo</code> method:</p>
+<p>The &lt;rl‑display&gt; element now behaves similarly to a regular web map. The last step to make the panning process even more fancy is to introduce <em>zooming</em>. Instead of drawing larger characters, we can temporarily scale up the whole display with the <code>scaleTo</code> method:</p>
 
 <script type="application/x-ample">
-let utils = await import(`${location.href}utils.js`);
+let utils = await import(new URL("utils.js", location));
 let display = document.createElement("rl-display");
 yield display;
 
@@ -206,7 +204,7 @@ while (true) {
 <p>Panning and scaling is animated and therefore asynchronous. These methods are returning <em>Promises</em>, so in order to combine panning and scaling, it can be useful to combine the retured values with <code>Promise.all</code>:</p>
 
 <script type="application/x-ample">
-let utils = await import(`${location.href}utils.js`);
+let utils = await import(new URL("utils.js", location));
 let display = document.createElement("rl-display");
 yield display;
 
@@ -231,7 +229,7 @@ while (true) {
 }
 </script>
 
-<h2>Part 4: effects</h2>
+<h2 id="effects">Part 4: effects</h2>
 
 <p>It is possible to apply various visual effects to glyphs drawn into the display. To do that, we need a way to refer to individual characters &ndash; a unique identifier. There are two ways to do that:</p>
 
@@ -243,7 +241,7 @@ while (true) {
 <p>Let's test both approaches with the most basic effect, the <code>move()</code> function:</p>
 
 <script type="application/x-ample">
-let utils = await import(`${location.href}utils.js`);
+let utils = await import(new URL("utils.js", location));
 
 let display = document.createElement("rl-display");
 yield display;
@@ -279,7 +277,7 @@ while (true) {
 <p>Let's see them in action:</p>
 
 <script type="application/x-ample">
-let utils = await import(`${location.href}utils.js`);
+let utils = await import(new URL("utils.js", location));
 
 let display = document.createElement("rl-display");
 display.draw(10, 5, {ch:"@", fg:"cyan"}, {id:"player"});
@@ -301,7 +299,7 @@ return fragment;
 <p>The value returned from the <code>fx()</code> method is an instance of the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Animation">Animation class</a>. You can use it, for example, to wait for the completion (via its <code>finished</code> property) or to cancel a long-running animation (via its <code>cancel()</code> method). Let's test this along with a custom animation definition:</p>
 
 <script type="application/x-ample">
-let utils = await import(`${location.href}utils.js`);
+let utils = await import(new URL("utils.js", location));
 
 let display = document.createElement("rl-display");
 yield display;
@@ -311,7 +309,7 @@ let keyframes = {
 	rotate: ["0deg", "30deg", "-50deg", "180deg"]
 }
 
-while (1) {
+while (true) {
 	let animation = display.fx(money, keyframes, 1000);
 	await animation.finished;
 	await utils.sleep(1000);
@@ -320,35 +318,110 @@ while (1) {
 
 <p>The last (third) argument to <code>fx()</code> is the animation's duration. Timing of various animated activities is explained in more detail in the following chapter.</p>
 
-<h2>Part 5: timing</h2>
+<h2 id="timing">Part 5: timing</h2>
 
-<h2>Part 6: depth and composition</h2>
+<p>Many operations performed on a &lt;rl‑display&gt; are animated and thus happen over a period of time. Durations (and other time-related properties) of these animations are configurable. Custom timing can be specified by providing an optional (last) argument to these methods:</p>
 
-<h2>Part 7: additional features</h2>
+<ul>
+	<li><code>scaleTo()</code></li>
+	<li><code>panTo()</code></li>
+	<li><code>panToCenter()</code></li>
+	<li><code>move()</code></li>
+	<li><code>fx()</code></li>
+</ul>
+
+<p>We are using the same data type that is used as a last argument to the <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyframeEffect/KeyframeEffect#options">KeyframeEffect</a> constructor. Two values are possible:</p>
+
+<ol>
+	<li>A single number that represents the duration (in milliseconds)</li>
+	<li>An object with several optional properties (most relevant: <code>duration</code> and <code>iterations</code>)</li>
+</ol>
+
+<p>The example below shows different movement speeds specified using both data types:</p>
 
 <script type="application/x-ample">
-let utils = await import(`${location.href}utils.js`);
-
 let display = document.createElement("rl-display");
-for (let x=0;x<display.cols;x++) {
-	for (let y=0;y<display.rows;y++) {
-		let in_x = x * (display.cols-1-x);
-		let in_y = y * (display.rows-1-y);
-		let ch = in_x && in_y ? "." : "#";
-		display.draw(x, y, {ch});
-	}
-}
-
 yield display;
 
-let pc = display.draw(5, 5, {ch:"@"});
+display.draw(6, 5, {ch:"@", fg:"red"}, {id:"player"});
 while (true) {
-	await utils.sleep(1000);
-	await display.move(pc, 4, 4);
-	await utils.sleep(1000);
-	await display.move(pc, 3, 3);
+	await display.move("player", 14, 5, 1500);
+	await display.move("player", 6, 5, {duration:500});
 }
 </script>
+
+<p>The second form is more verbose, but can be useful when you need to specify additional properties, such as the iteration count. We can create an infinite animation that runs unless explicitly stopped:</p>
+
+<script type="application/x-ample">
+let display = document.createElement("rl-display");
+
+let money = display.draw(10, 5, {ch:"$", fg:"goldenrod"});
+let keyframes = {rotate: ["0deg", "360deg"]}
+let timing = {duration: 1000, iterations: Infinity};
+
+let animation = display.fx(money, keyframes, timing);
+
+let button = document.createElement("button");
+button.textContent = "Stop";
+button.onclick = () => animation.cancel();
+
+let fragment = document.createDocumentFragment();
+fragment.append(display, document.createElement("br"), button);
+return fragment;
+</script>
+
+
+<h2 id="depth-and-composition">Part 6: depth and composition</h2>
+
+<p>What happens if you draw at a position that already contains something? By default, the &lt;rl‑display&gt; behaves like your traditional terminal: the original content is overwritten and completely lost. However, the <code>draw()</code> method allows you to specify a <em>z-index</em> value that corresponds to a drawing layer depth. With this approach,</p>
+
+<ul>
+	<li>multiple characters (with different z-index values) can be drawn at one position, but</li>
+	<li>only the top-most (largest z-index) character is visible.</li>
+</ul>
+
+<p>This means that the display remembers previously drawn characters and once the top one disappears, the one below it gets shown:</p>
+
+<script type="application/x-ample">
+let utils = await import(new URL("utils.js", location));
+
+let display = document.createElement("rl-display");
+yield display;
+
+utils.drawRectangle(display);
+let pc = display.draw(9, 5, {ch:"@", fg:"red"}, {zIndex:1});
+
+while (true) {
+	await display.move(pc, 10, 5);
+	await utils.sleep(1000);
+	await display.move(pc, 9, 5);
+	await utils.sleep(1000);
+}
+</script>
+
+<p>Note how the dot below the player character gets hidden and re-appears once the player moves away. The <em>z-index</em> value is specified using the same optional configuration object that is used to specify the <em>id</em> (and defaults to zero).</p>
+
+<p>There are two main ways to remove some previously-drawn content: by-id and by-position. We can leverage the fact that every object drawn has a unique identifier. The <code>delete()</code> method can be used to remove it:</p>
+
+<script type="application/x-ample">
+let utils = await import(new URL("utils.js", location));
+
+let display = document.createElement("rl-display");
+yield display;
+
+utils.drawRectangle(display);
+
+while (true) {
+	let x = 1 + Math.floor(Math.random() * (display.cols-2));
+	let y = 1 + Math.floor(Math.random() * (display.rows-2));
+	let id = display.draw(x, y, {ch:"@", fg:"red"}, {zIndex:1});
+	await utils.sleep(1000);
+	display.delete(id);
+}
+</script>
+
+<h2 id="additional-features">Part 7: additional features</h2>
+
 
 <script type="module" src="./t-o-c.js"></script>
 <script type="module" src="../rl-display.js"></script>

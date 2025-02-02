@@ -69,7 +69,7 @@ function createItem(node) {
 	a.part = "a";
 	a.textContent = node.textContent;
 	if (node.id) {
-		a.href = `#{node.id}`;
+		a.href = `#${node.id}`;
 	} else {
 		a.href = "#";
 		a.onclick = e => {

@@ -22,6 +22,11 @@ h1, h2, h3 {
 	font-family: jost;
 }
 
+h2 {
+	margin-top: 2em;
+	margin-bottom: 0.5em;
+}
+
 p, li {
 	font-size: 18px;
 	code {
@@ -38,16 +43,7 @@ x-ample {
 	width: 500px;
 	margin: auto;
 	tab-size: 4;
-}
-
-h2 {
-	position: relative;
-	&:hover::before {
-		content: "🔗";
-		position: absolute;
-		left: -2em;
-		top: 0;
-	}
+	margin-bottom: 2em;
 }
 
 @media (min-width: 1200px) {

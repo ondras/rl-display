@@ -72,24 +72,28 @@ export default class RlDisplay extends HTMLElement {
 		this.style.setProperty("--canvas-height", rows);
 	}
 
-	scaleTo(scale) {
-		let a = this.animate([{"--scale": scale}], {duration:100, fill:"both"});
+	scaleTo(scale, timing) {
+		let options = {duration:300, fill:"both"};
+		mergeTiming(options, timing);
+		let a = this.animate([{"--scale": scale}], options);
 		return waitAndCommit(a);
 	}
 
-	panTo(x, y) {
+	panTo(x, y, timing) {
 		const { cols, rows } = this;
 		let props = {
 			"--pan-dx": (cols-1)/2 - x,
 			"--pan-dy": (rows-1)/2 - y
 		}
-		let a = this.animate([props], {duration:100, fill:"both"});
+		let options = {duration:300, fill:"both"};
+		mergeTiming(options, timing);
+		let a = this.animate([props], options);
 		return waitAndCommit(a);
 	}
 
-	panToCenter() {
+	panToCenter(timing) {
 		const { cols, rows } = this;
-		return this.panTo((cols-1)/2, (rows-1)/2);
+		return this.panTo((cols-1)/2, (rows-1)/2, timing);
 	}
 
 	/**
@@ -110,7 +114,7 @@ export default class RlDisplay extends HTMLElement {
 		let node;
 		let data = this.#storage.getById(id);
 		if (data) {
-			// fixmy applyDepth na stare pozici
+			// fixme applyDepth na stare pozici
 			this.#storage.update(id, {x, y, zIndex});
 			node = data.node;
 		} else {
@@ -127,7 +131,7 @@ export default class RlDisplay extends HTMLElement {
 		return id;
 	}
 
-	async move(id, x, y) {
+	async move(id, x, y, timing) {
 		let data = this.#storage.getById(id);
 		// fixme if none
 
@@ -142,7 +146,10 @@ export default class RlDisplay extends HTMLElement {
 			"--x": x,
 			"--y": y
 		};
-		let a = data.node.animate([props], {duration:100, fill:"both"});
+
+		let options = {duration:150, fill:"both"};
+		mergeTiming(options, timing);
+		let a = data.node.animate([props], options);
 		await waitAndCommit(a);
 		this.#applyDepth(x, y);
 	}
@@ -157,6 +164,7 @@ export default class RlDisplay extends HTMLElement {
 		if (data) {
 			data.node.remove();
 			this.#storage.delete(id);
+			this.#applyDepth(data.x, data.y);
 		}
 	}
 
@@ -197,6 +205,16 @@ export default class RlDisplay extends HTMLElement {
 		data.forEach(data => {
 			data.node.hidden = data.zIndex < maxZindex;
 		});
+	}
+}
+
+function mergeTiming(options, timing) {
+	if (timing) {
+		if (typeof(timing) == "number") {
+			options.duration = timing;
+		} else {
+			Object.assign(options, timing);
+		}
 	}
 }
 
