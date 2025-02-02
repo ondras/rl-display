@@ -1,0 +1,9 @@
+rl-display, ::part(code), ::part(textarea) {
+	font-family: noto sans mono;
+	font-weight: 600;
+}
+
+::part(code), ::part(textarea) {
+	font-size: 14px;
+}
+

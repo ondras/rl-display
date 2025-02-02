@@ -3,7 +3,10 @@
 	<head>
 		<meta charset="utf-8" />
 		<title>&lt;rl-display&gt; manual</title>
-		<link rel="stylesheet" href="index.css" />
+		<link rel="stylesheet" id="ss-example" href="example.css" />
+		<link rel="stylesheet" id="ss-manual" href="index.css" />
+		<link rel="stylesheet" id="ss-hljs" crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/stackoverflow-light.min.css" />
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 	</head>
 	<body>
 
@@ -350,15 +353,28 @@ while (true) {
 <script type="module" src="./t-o-c.js"></script>
 <script type="module" src="../rl-display.js"></script>
 <script type="module">
-	import XAmple from "https://cdn.jsdelivr.net/gh/ondras/x-ample@master/x-ample.js"
+import XAmple from "https://cdn.jsdelivr.net/gh/ondras/x-ample@master/x-ample.js"
 
-	function createExamples() {
-		let selector = `script[type="application/x-ample"]`;
-		[...document.querySelectorAll(selector)].forEach(node => XAmple.replaceScript(node));
-	}
+function createStyleSheet(link) {
+	let stylesheet = new CSSStyleSheet();
+	[...link.sheet.cssRules].forEach(rule => stylesheet.insertRule(rule.cssText));
+	return stylesheet;
+}
 
-	await customElements.whenDefined("rl-display");
-	createExamples();
+let hljsStylesheet = createStyleSheet(document.querySelector("#ss-hljs"));
+let exampleStylesheet = createStyleSheet(document.querySelector("#ss-example"));
+
+function createExamples() {
+	let selector = `script[type="application/x-ample"]`;
+	[...document.querySelectorAll(selector)].forEach(node => {
+		let example = XAmple.replaceScript(node);
+		example.adoptStyleSheet(hljsStylesheet);
+		example.adoptStyleSheet(exampleStylesheet);
+	});
+}
+
+await customElements.whenDefined("rl-display");
+createExamples();
 </script>
 	</body>
 </html>

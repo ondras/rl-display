@@ -1,5 +1,7 @@
 export default class TOC extends HTMLElement {
-    static get observedAttributes() {
+	#hasContent = false;
+
+	static get observedAttributes() {
 		return ["selector"];
 	}
 
@@ -14,13 +16,14 @@ export default class TOC extends HTMLElement {
     attributeChangedCallback(name, oldValue, newValue) {
         switch (name) {
 			case "selector":
-				this.isConnected && this.#build();
+				this.#hasContent && this.#build();
 			break;
 		}
     }
 
 	connectedCallback() {
 		this.shadowRoot.innerHTML = HTML;
+		this.#hasContent = true;
 		this.#build();
 	}
 
@@ -61,7 +64,9 @@ function getNodeDepth(node) {
 
 function createItem(node) {
 	let li = document.createElement("li");
+	li.part = "li";
 	let a = document.createElement("a");
+	a.part = "a";
 	a.textContent = node.textContent;
 	if (node.id) {
 		a.href = `#{node.id}`;

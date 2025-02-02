@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,200..900;1,200..900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&display=swap');
 @import url("https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wght@100..900&display=swap');
 
 body {
 	--width: 700px;
@@ -11,6 +11,11 @@ body {
 	margin: 0 auto;
 	padding: var(--padding);
 	line-height: var(--line-height);
+	background-color: #c85;
+}
+
+a, t-o-c::part(a) {
+	color: #049;
 }
 
 h1, h2, h3 {
@@ -20,14 +25,11 @@ h1, h2, h3 {
 p, li {
 	font-size: 18px;
 	code {
-		font-size: 16px;
+		font-size: 14px;
 		font-weight: bold;
 		white-space: nowrap;
+		font-family: noto sans mono;
 	}
-}
-
-code, rl-display {
-	font-family: inconsolata;
 }
 
 li code:first-child { font-weight: bold; }
@@ -35,6 +37,7 @@ li code:first-child { font-weight: bold; }
 x-ample {
 	width: 500px;
 	margin: auto;
+	tab-size: 4;
 }
 
 h2 {

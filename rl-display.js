@@ -35,6 +35,13 @@ export default class RlDisplay extends HTMLElement {
 	#canvas = document.createElement("div");
 	#canvasSize = [20, 10];
 
+	/**
+	 * Computes an optimal character size if we want to fit a given number of characters into a given area.
+	 * @param {[number, number]} tileCount
+	 * @param {*} area
+	 * @param {*} aspectRatioRange
+	 * @returns {[number, number]} width and height
+	 */
 	static computeTileSize(tileCount, area, aspectRatioRange) {
 		let w = Math.floor(area[0]/tileCount[0]);
 		let h = Math.floor(area[1]/tileCount[1]);
@@ -85,6 +92,14 @@ export default class RlDisplay extends HTMLElement {
 		return this.panTo((cols-1)/2, (rows-1)/2);
 	}
 
+	/**
+	 * Draws one character (and optionally removes it from its previous position).
+	 * @param {number} x
+	 * @param {number} y
+	 * @param {Visual} visual
+	 * @param {Options} [options]
+	 * @returns {number} ID
+	 */
 	draw(x, y, visual, options={}) {
 		let id = options.id || Math.random();
 		let zIndex = options.zIndex || 0;
