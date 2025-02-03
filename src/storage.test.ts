@@ -3,7 +3,7 @@ import * as storage from "./storage.ts";
 
 
 interface StorageCtor {
-	new(): storage.Storage<any, {}>;
+	new<D = {}>(): storage.Storage<any, D>;
 }
 
 function test(ctor: StorageCtor) {
@@ -16,31 +16,31 @@ function test(ctor: StorageCtor) {
 	});
 
 	Deno.test(L + "store and retrieve by id", () => {
-		let data = {};
+		let data = {x:0, y:0, zIndex:0};
 		let s = new ctor();
 		s.add("id", data);
 		assertEquals(s.getById("id"), data);
 	});
 
 	Deno.test(L + "store and update", () => {
-		let s = new ctor();
-		let data = {p:1};
+		let s = new ctor<{p:number}>();
+		let data = {x:0, y:0, zIndex:0, p:1};
 		s.add("id", data);
 		s.update("id", {p:2});
-		assertEquals(s.getById("id").p, 2);
+		assertEquals(s.getById("id")!.p, 2);
 	});
 
 	Deno.test(L + "store and remove", () => {
 		let s = new ctor();
-		s.add("id", {});
+		s.add("id", {x:0, y:0, zIndex:0});
 		s.delete("id");
 		assertEquals(s.getById("id"), undefined);
 	});
 
 	Deno.test(L + "store and retrieve by position", () => {
 		let s = new ctor();
-		s.add("id1", {x:2, y:3});
-		s.add("id2", {x:2, y:3});
+		s.add("id1", {x:2, y:3, zIndex:0});
+		s.add("id2", {x:2, y:3, zIndex:0});
 
 		let ids = s.getIdsByPosition(2, 3);
 		assertInstanceOf(ids, Set)
@@ -60,7 +60,7 @@ function test(ctor: StorageCtor) {
 
 	Deno.test(L + "update 2d index", () => {
 		let s = new ctor();
-		s.add("id", {x:2, y:3});
+		s.add("id", {x:2, y:3, zIndex:0});
 		s.update("id", {x:3, y:4});
 
 		assertEquals(s.getIdsByPosition(2, 3).size, 0);

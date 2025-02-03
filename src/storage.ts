@@ -45,7 +45,7 @@ export class ArrayStorage<ID, D = {}> extends Storage<ID, D> {
 function positionKey(x: number, y: number) { return `${x},${y}`; }
 
 export class MapStorage<ID, D = {}> extends Storage<ID, D> {
-	#idToData = new Map<ID, D & BaseData & {id:ID}>();
+	#idToData = new Map<ID, D & BaseData>();
 	#idToKey = new Map<ID, string>();
 	#keyToIds = new Map<string, Set<ID>>();
 
@@ -53,7 +53,7 @@ export class MapStorage<ID, D = {}> extends Storage<ID, D> {
 	getIdsByPosition(x: number, y: number) { return this.#keyToIds.get(positionKey(x, y)) || new Set(); }
 	getIdByPosition(x: number, y: number, zIndex: number) {
 		let ids = this.getIdsByPosition(x, y);
-		return [...ids].find(id => this.getById(id).zIndex == zIndex);
+		return [...ids].find(id => this.getById(id)!.zIndex == zIndex);
 	}
 
 	add(id: ID, data: D & BaseData) {
@@ -65,13 +65,13 @@ export class MapStorage<ID, D = {}> extends Storage<ID, D> {
 
 	update(id: ID, data: Partial<D & BaseData>) {
 		// update data storage
-		let currentData = this.getById(id);
+		let currentData = this.getById(id)!;
 		Object.assign(currentData, data);
 
-		let currentKey = this.#idToKey.get(id);
+		let currentKey = this.#idToKey.get(id)!;
 		let newKey = positionKey(currentData.x, currentData.y);
 		if (currentKey != newKey) { // position changed
-			this.#keyToIds.get(currentKey).delete(id);
+			this.#keyToIds.get(currentKey)!.delete(id);
 			this.#addIdToSet(id, newKey);
 			this.#idToKey.set(id, newKey);
 		}
@@ -79,7 +79,7 @@ export class MapStorage<ID, D = {}> extends Storage<ID, D> {
 
 	#addIdToSet(id: ID, key: string) {
 		if (this.#keyToIds.has(key)) {
-			this.#keyToIds.get(key).add(id);
+			this.#keyToIds.get(key)!.add(id);
 		} else {
 			this.#keyToIds.set(key, new Set([id]));
 		}
@@ -87,8 +87,8 @@ export class MapStorage<ID, D = {}> extends Storage<ID, D> {
 
 	delete(id: ID) {
 		this.#idToData.delete(id);
-		let key = this.#idToKey.get(id);
-		this.#keyToIds.get(key).delete(id);
+		let key = this.#idToKey.get(id)!;
+		this.#keyToIds.get(key)!.delete(id);
 		this.#idToKey.delete(id);
 	}
 }
