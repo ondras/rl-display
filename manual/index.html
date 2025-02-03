@@ -270,6 +270,7 @@ while (true) {
 	<li><code>"fade-in"</code></li>
 	<li><code>"fade-out"</code></li>
 	<li><code>"pulse"</code></li>
+	<li><code>"explode"</code></li>
 </ul>
 
 <p>Let's see them in action:</p>
@@ -280,7 +281,7 @@ let utils = await import(new URL("utils.js", location));
 let display = document.createElement("rl-display");
 display.draw(10, 5, {ch:"@", fg:"cyan"}, {id:"player"});
 
-let buttons = ["fade-in", "fade-out", "pulse"].map(fx => {
+let buttons = ["fade-in", "fade-out", "pulse", "explode"].map(fx => {
 	let button = document.createElement("button");
 	button.textContent = fx;
 	button.onclick = () => display.fx("player", fx);

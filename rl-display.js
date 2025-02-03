@@ -12,17 +12,25 @@ const EFFECTS = {
 		keyframes: { opacity: [0, 1]},
 		options: 300
 	},
-
 	"fade-out": {
 		keyframes: { opacity: [1, 0]},
 		options: 300
 	},
 
-	"glow": {
-		keyframes: {
-			textShadow: ["0 0 0 red", "0 0 5px red", "0 0 0 red"]
-		},
-		options: 500
+	"explode": {
+		keyframes: [
+			{scale:0.9, opacity:1},
+			{scale:1},
+			{scale:1.3},
+			{scale:1.2},
+			{scale:1.3},
+			{scale:1.4},
+			{scale:1.3},
+			{scale:"2 1.5", opacity:1},
+			{scale:"4 3", opacity: 0.5},
+			{scale:"8 6", opacity:0},
+		],
+		options: 800
 	}
 }
 
