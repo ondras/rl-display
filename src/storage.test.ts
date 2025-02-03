@@ -3,7 +3,7 @@ import * as storage from "./storage.ts";
 
 
 interface StorageCtor {
-	new(): storage.Storage;
+	new(): storage.Storage<any, {}>;
 }
 
 function test(ctor: StorageCtor) {

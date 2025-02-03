@@ -1,25 +1,23 @@
-type Id = any;
-
 interface BaseData {
 	x: number;
 	y: number;
 	zIndex: number;
 }
 
-export abstract class Storage<D = {}> {
-	abstract getById(id: Id): (D & BaseData) | undefined;
-	abstract getIdsByPosition(x: number, y: number): Set<Id>;
-	abstract getIdByPosition(x: number, y: number, zIndex: number): Id;
+export abstract class Storage<ID, D = {}> {
+	abstract getById(id: ID): (D & BaseData) | undefined;
+	abstract getIdsByPosition(x: number, y: number): Set<ID>;
+	abstract getIdByPosition(x: number, y: number, zIndex: number): ID | undefined;
 
-	abstract add(id: Id, data: (D & BaseData)): void;
-	abstract update(id: Id, data: Partial<(D & BaseData)>): void;
-	abstract delete(id: Id): void;
+	abstract add(id: ID, data: (D & BaseData)): void;
+	abstract update(id: ID, data: Partial<(D & BaseData)>): void;
+	abstract delete(id: ID): void;
 }
 
-export class ArrayStorage<D = {}> extends Storage<D> {
-	#data: (D & BaseData & {id: Id})[] = [];
+export class ArrayStorage<ID, D = {}> extends Storage<ID, D> {
+	#data: (D & BaseData & {id: ID})[] = [];
 
-	getById(id: Id) {
+	getById(id: ID) {
 		return this.#data.find(item => item.id == id);
 	}
 	getIdsByPosition(x: number, y:number) {
@@ -29,16 +27,16 @@ export class ArrayStorage<D = {}> extends Storage<D> {
 		return this.#data.find(item => item.x == x && item.y == y && item.zIndex == zIndex)?.id;
 	}
 
-	add(id: Id, data: D & BaseData) {
+	add(id: ID, data: D & BaseData) {
 		this.#data.push(Object.assign(data, {id}));
 	}
 
-	update(id: Id, data: Partial<D & BaseData>) {
+	update(id: ID, data: Partial<D & BaseData>) {
 		let index = this.#data.findIndex(item => item.id == id);
 		Object.assign(this.#data[index], data);
 	}
 
-	delete(id: Id) {
+	delete(id: ID) {
 		let index = this.#data.findIndex(item => item.id == id);
 		this.#data.splice(index, 1);
 	}
@@ -46,26 +44,26 @@ export class ArrayStorage<D = {}> extends Storage<D> {
 
 function positionKey(x: number, y: number) { return `${x},${y}`; }
 
-export class MapStorage<D = {}> extends Storage<D> {
-	#idToData = new Map<Id, D & BaseData & {id:Id}>();
-	#idToKey = new Map<Id, string>();
-	#keyToIds = new Map<string, Set<Id>>();
+export class MapStorage<ID, D = {}> extends Storage<ID, D> {
+	#idToData = new Map<ID, D & BaseData & {id:ID}>();
+	#idToKey = new Map<ID, string>();
+	#keyToIds = new Map<string, Set<ID>>();
 
-	getById(id: Id) { return this.#idToData.get(id); }
+	getById(id: ID) { return this.#idToData.get(id); }
 	getIdsByPosition(x: number, y: number) { return this.#keyToIds.get(positionKey(x, y)) || new Set(); }
 	getIdByPosition(x: number, y: number, zIndex: number) {
 		let ids = this.getIdsByPosition(x, y);
 		return [...ids].find(id => this.getById(id).zIndex == zIndex);
 	}
 
-	add(id: Id, data: D & BaseData) {
+	add(id: ID, data: D & BaseData) {
 		this.#idToData.set(id, data);
 		let key = positionKey(data.x, data.y);
 		this.#idToKey.set(id, key);
 		this.#addIdToSet(id, key);
 	}
 
-	update(id: Id, data: Partial<D & BaseData>) {
+	update(id: ID, data: Partial<D & BaseData>) {
 		// update data storage
 		let currentData = this.getById(id);
 		Object.assign(currentData, data);
@@ -79,7 +77,7 @@ export class MapStorage<D = {}> extends Storage<D> {
 		}
 	}
 
-	#addIdToSet(id: Id, key: string) {
+	#addIdToSet(id: ID, key: string) {
 		if (this.#keyToIds.has(key)) {
 			this.#keyToIds.get(key).add(id);
 		} else {
@@ -87,7 +85,7 @@ export class MapStorage<D = {}> extends Storage<D> {
 		}
 	}
 
-	delete(id: Id) {
+	delete(id: ID) {
 		this.#idToData.delete(id);
 		let key = this.#idToKey.get(id);
 		this.#keyToIds.get(key).delete(id);

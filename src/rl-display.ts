@@ -1,6 +1,13 @@
 import { ArrayStorage as Storage } from "./storage.ts";
 
 type Timing = number | KeyframeAnimationOptions;
+type Id = any;
+
+interface Visual {
+	ch?: string;
+	fg?: string;
+	bg?: string;
+}
 
 
 const EFFECTS = {
@@ -42,7 +49,7 @@ const EFFECTS = {
  * The <rl-display> Custom Element. Uses Shadow DOM, contents are not visible. To show stuff, use its JS API.
  */
 export default class RlDisplay extends HTMLElement {
-	#storage = new Storage<{node:HTMLElement}>();
+	#storage = new Storage<Id, {node:HTMLElement}>();
 	#canvas = document.createElement("div");
 	#canvasSize = [20, 10];
 
@@ -105,13 +112,8 @@ export default class RlDisplay extends HTMLElement {
 
 	/**
 	 * Draws one character (and optionally removes it from its previous position).
-	 * @param {number} x
-	 * @param {number} y
-	 * @param {Visual} visual
-	 * @param {Options} [options]
-	 * @returns {number} ID
 	 */
-	draw(x: number, y: number, visual, options={}) {
+	draw(x: number, y: number, visual: Visual, options={}) {
 		let id = options.id || Math.random();
 		let zIndex = options.zIndex || 0;
 
@@ -308,13 +310,13 @@ const PRIVATE_STYLE = `
 customElements.define("rl-display", RlDisplay);
 document.head.append(createStyle(PUBLIC_STYLE));
 
-function updateProperties(node, props) {
+function updateProperties(node: HTMLElement, props: Record<string, string>) {
 	for (let key in props) { node.style.setProperty(key, props[key]); }
 }
 
-function updateVisual(node, visual) {
+function updateVisual(node: HTMLElement, visual: Visual) {
 	if (visual.ch) { node.textContent = visual.ch; }
-	let props = {};
+	let props: Record<string, string> = {};
 	if (visual.fg) { props.color = visual.fg; }
 	if (visual.bg) { props["background-color"] = visual.bg; }
 	updateProperties(node, props);
