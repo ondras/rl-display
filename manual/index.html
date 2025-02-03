@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8" />
 		<title>&lt;rl-display&gt; manual</title>
-		<link rel="stylesheet" id="ss-example" href="example.css" />
+		<link rel="stylesheet" id="ss-example" href="x-ample.css" />
 		<link rel="stylesheet" id="ss-manual" href="index.css" />
 		<link rel="stylesheet" id="ss-hljs" crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/base16/dirtysea.min.css" />
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
@@ -78,9 +78,7 @@ d1.cols = d1.rows = 3;
 d2.cols = d2.rows = 5;
 d3.cols = d3.rows = 10;
 
-let fragment = document.createDocumentFragment();
-fragment.append(d1, " ", d2, " ", d3);
-return fragment;
+return [d1, " ", d2, " ", d3]
 </script>
 
 <p>Primary CSS properties used to adjust the display are:</p>
@@ -282,7 +280,6 @@ let utils = await import(new URL("utils.js", location));
 let display = document.createElement("rl-display");
 display.draw(10, 5, {ch:"@", fg:"cyan"}, {id:"player"});
 
-let fragment = document.createDocumentFragment();
 let buttons = ["fade-in", "fade-out", "pulse"].map(fx => {
 	let button = document.createElement("button");
 	button.textContent = fx;
@@ -291,9 +288,7 @@ let buttons = ["fade-in", "fade-out", "pulse"].map(fx => {
 })
 
 let br = document.createElement("br");
-fragment.append(display, br, ...buttons);
-
-return fragment;
+return [display, br, ...buttons];
 </script>
 
 <p>The value returned from the <code>fx()</code> method is an instance of the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Animation">Animation class</a>. You can use it, for example, to wait for the completion (via its <code>finished</code> property) or to cancel a long-running animation (via its <code>cancel()</code> method). Let's test this along with a custom animation definition:</p>
@@ -365,9 +360,7 @@ let button = document.createElement("button");
 button.textContent = "Stop";
 button.onclick = () => animation.cancel();
 
-let fragment = document.createDocumentFragment();
-fragment.append(display, document.createElement("br"), button);
-return fragment;
+return [display, document.createElement("br"), button];
 </script>
 
 
@@ -461,7 +454,7 @@ let display = new RLDisplay();
 utils.drawRectangle(display);
 
 let tileCount = [20, 10];
-let arRange = [0.5, 5];
+let arRange = [0.5, 2];
 
 function createInput(text, value) {
 	let label = document.createElement("label");
@@ -486,18 +479,14 @@ function sync() {
 }
 sync();
 
-let fragment = document.createDocumentFragment();
-fragment.append(display, width.labels[0], height.labels[0]);
-
-return fragment;
+return [display, width.labels[0], height.labels[0]];
 </script>
-
 
 
 <script type="module" src="./t-o-c.js"></script>
 <script type="module" src="../rl-display.js"></script>
 <script type="module">
-import XAmple from "https://cdn.jsdelivr.net/gh/ondras/x-ample@master/x-ample.js"
+import XAmple from "https://cdn.jsdelivr.net/gh/ondras/x-ample@latest/x-ample.js"
 
 function createStyleSheet(link) {
 	let stylesheet = new CSSStyleSheet();

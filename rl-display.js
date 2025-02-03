@@ -185,7 +185,7 @@ export default class RlDisplay extends HTMLElement {
 	connectedCallback() {
 		const { shadowRoot } = this;
 
-		// frowards js->css props
+		// forward js->css props
 		this.cols = this.cols;
 		this.rows = this.rows;
 
