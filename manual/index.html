@@ -30,13 +30,13 @@
 	<li>Via JavaScript instantiation (<code>new</code> operator)</li>
 	<li>Via JavaScript <code>document.createElement</code> call</li>
 </ol>
-<p>Manipulating the display is performed with JS calls, so it makes most sense to create the display via JavaScript as well. Let's create a display and draw some characters inside:</p>
+<p>Manipulating the display is performed with JS calls, so it makes most sense to create the display using JavaScript as well. Let's create a display and draw some characters inside:</p>
 
 <script type="application/x-ample">
 let display = document.createElement("rl-display");
 
 display.draw(8, 6, {ch:"@", fg:"red"});
-display.draw(10, 5, {ch:"$", fg:"goldenrod"});
+display.draw(10, 3, {ch:"$", fg:"goldenrod"});
 display.draw(12, 7, {ch:"g", fg:"lime"});
 
 return display;
@@ -420,7 +420,78 @@ while (true) {
 }
 </script>
 
+<p>To remove by position, we need to supply a pair of coordinates to the <code>clear()</code> method. But because one position can hold many characters (with different z-indexes), we need to supply a z-index as well (as the third argument). This way, the id is no longer necessary:</p>
+
+<script type="application/x-ample">
+let utils = await import(new URL("utils.js", location));
+
+let display = document.createElement("rl-display");
+yield display;
+
+utils.drawRectangle(display);
+
+while (true) {
+	let x = 1 + Math.floor(Math.random() * (display.cols-2));
+	let y = 1 + Math.floor(Math.random() * (display.rows-2));
+	display.draw(x, y, {ch:"@", fg:"yellow"}, {zIndex:1});
+	await utils.sleep(1000);
+	display.clear(x, y, 1);
+}
+</script>
+
+
+
 <h2 id="additional-features">Part 7: additional features</h2>
+
+<p>Web apps often need to handle a large variety of different display devices and their sizes. This might prove difficult given the spatial constraints of the game engine &ndash; if the game map needs to be large, visualizing it on a small device is hard. In <a href="#canvas-vs-port">Part 3</a>, we show a possible approach that limits the viewport and leverages panning to show different parts of the whole map canvas. An alternative way is to pick the character size in a way that the map always fits the requested display size.</p>
+
+<p>The static method <code>computeTileSize</code> can be used to derive a suitable set of tile dimensions, according to given constraints. To call it, we need:</p>
+
+<ol>
+	<li><code>tileCount</code> &ndash; an pair of [cols, rows] describing the number of characters to fit,</li>
+	<li><code>area</code> &ndash; a pair of [width, height] (in pixels) of the target available rendering area,</li>
+	<li><code>aspectRatioRange</code> &ndash; a range of [min, max] number values that limit the target tile aspect ratio</li>
+</ol>
+
+<script type="application/x-ample">
+let utils = await import(new URL("utils.js", location));
+let RLDisplay = customElements.get("rl-display");
+
+let display = new RLDisplay();
+utils.drawRectangle(display);
+
+let tileCount = [20, 10];
+let arRange = [0.5, 5];
+
+function createInput(text, value) {
+	let label = document.createElement("label");
+	let input = document.createElement("input");
+	input.type = "range";
+	input.min = 100;
+	input.max = 600;
+	input.value = value;
+	label.append(text, input);
+	input.oninput = () => sync();
+	return input;
+}
+
+let width = createInput("Width:", 400);
+let height = createInput("Height:", 200);
+
+function sync() {
+	let area = [width.value, height.value];
+	let [w, h] = RLDisplay.computeTileSize(tileCount, area, arRange);
+	display.style.setProperty("--tile-width", `${w}px`);
+	display.style.setProperty("--tile-height", `${h}px`);
+}
+sync();
+
+let fragment = document.createDocumentFragment();
+fragment.append(display, width.labels[0], height.labels[0]);
+
+return fragment;
+</script>
+
 
 
 <script type="module" src="./t-o-c.js"></script>
