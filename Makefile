@@ -1,4 +1,8 @@
-
 rl-display.js: src/*.ts
-	$(ESBUILD) src/rl-display.ts --bundle --minify --outfile=$@
+	deno run -A jsr:@orgsoft/dsbuild --in src/rl-display.ts --out $@
 
+test:
+	deno test --no-check src
+
+doc:
+	deno doc --html src/rl-display.ts

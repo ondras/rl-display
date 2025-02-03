@@ -1,5 +1,5 @@
 import { assertEquals, assertInstanceOf } from "jsr:@std/assert";
-import * as storage from "./storage.js";
+import * as storage from "./storage.ts";
 
 
 function test(ctor) {
