@@ -2,7 +2,11 @@ import { assertEquals, assertInstanceOf } from "jsr:@std/assert";
 import * as storage from "./storage.ts";
 
 
-function test(ctor) {
+interface StorageCtor {
+	new(): storage.Storage;
+}
+
+function test(ctor: StorageCtor) {
 	let L = `${ctor.name}: `;
 	Deno.test(L + "empty record", () => {
 		let s = new ctor();

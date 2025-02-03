@@ -1,5 +1,8 @@
 import { ArrayStorage as Storage } from "./storage.ts";
 
+type Timing = number | KeyframeAnimationOptions;
+
+
 const EFFECTS = {
 	"pulse": {
 		keyframes: {
@@ -39,18 +42,14 @@ const EFFECTS = {
  * The <rl-display> Custom Element. Uses Shadow DOM, contents are not visible. To show stuff, use its JS API.
  */
 export default class RlDisplay extends HTMLElement {
-	#storage = new Storage();
+	#storage = new Storage<{node:HTMLElement}>();
 	#canvas = document.createElement("div");
 	#canvasSize = [20, 10];
 
 	/**
 	 * Computes an optimal character size if we want to fit a given number of characters into a given area.
-	 * @param {[number, number]} tileCount
-	 * @param {*} area
-	 * @param {*} aspectRatioRange
-	 * @returns {[number, number]} width and height
 	 */
-	static computeTileSize(tileCount, area, aspectRatioRange) {
+	static computeTileSize(tileCount: number[], area: number[], aspectRatioRange: number[]) {
 		let w = Math.floor(area[0]/tileCount[0]);
 		let h = Math.floor(area[1]/tileCount[1]);
 		let ar = w/h;
@@ -71,23 +70,23 @@ export default class RlDisplay extends HTMLElement {
 	get cols() { return this.#canvasSize[0]; }
 	set cols(cols) {
 		this.#canvasSize[0] = cols;
-		this.style.setProperty("--canvas-width", cols);
+		this.style.setProperty("--canvas-width", String(cols));
 	}
 
 	get rows() { return this.#canvasSize[1]; }
 	set rows(rows) {
 		this.#canvasSize[1] = rows;
-		this.style.setProperty("--canvas-height", rows);
+		this.style.setProperty("--canvas-height", String(rows));
 	}
 
-	scaleTo(scale, timing) {
+	scaleTo(scale: number, timing?: Timing) {
 		let options = {duration:300, fill:"both"};
 		mergeTiming(options, timing);
 		let a = this.animate([{"--scale": scale}], options);
 		return waitAndCommit(a);
 	}
 
-	panTo(x, y, timing) {
+	panTo(x: number, y: number, timing?: Timing) {
 		const { cols, rows } = this;
 		let props = {
 			"--pan-dx": (cols-1)/2 - x,
@@ -99,7 +98,7 @@ export default class RlDisplay extends HTMLElement {
 		return waitAndCommit(a);
 	}
 
-	panToCenter(timing) {
+	panToCenter(timing?: Timing) {
 		const { cols, rows } = this;
 		return this.panTo((cols-1)/2, (rows-1)/2, timing);
 	}
@@ -112,7 +111,7 @@ export default class RlDisplay extends HTMLElement {
 	 * @param {Options} [options]
 	 * @returns {number} ID
 	 */
-	draw(x, y, visual, options={}) {
+	draw(x: number, y: number, visual, options={}) {
 		let id = options.id || Math.random();
 		let zIndex = options.zIndex || 0;
 
@@ -139,7 +138,7 @@ export default class RlDisplay extends HTMLElement {
 		return id;
 	}
 
-	async move(id, x, y, timing) {
+	async move(id: Id, x: number, y: number, timing?: Timing) {
 		let data = this.#storage.getById(id);
 		// fixme if none
 
@@ -162,12 +161,12 @@ export default class RlDisplay extends HTMLElement {
 		this.#applyDepth(x, y);
 	}
 
-	clear(x, y, zIndex=0) {
+	clear(x: number, y: number, zIndex=0) {
 		let id = this.#storage.getIdByPosition(x, y, zIndex);
 		if (id) { this.delete(id); }
 	}
 
-	delete(id) {
+	delete(id: Id) {
 		let data = this.#storage.getById(id);
 		if (data) {
 			data.node.remove();
@@ -180,7 +179,7 @@ export default class RlDisplay extends HTMLElement {
 		// FIXME
 	}
 
-	fx(id, keyframes, options) {
+	fx(id: Id, keyframes: string | Keyframe[] | PropertyIndexedKeyframes, options?: Timing) {
 		let record = this.#storage.getById(id);
 		// fixme if none
 		if (typeof(keyframes) == "string") {
@@ -197,13 +196,13 @@ export default class RlDisplay extends HTMLElement {
 		this.cols = this.cols;
 		this.rows = this.rows;
 
-		shadowRoot.replaceChildren(
+		shadowRoot!.replaceChildren(
 			createStyle(PRIVATE_STYLE),
 			this.#canvas
 		);
 	}
 
-	#applyDepth(x, y) {
+	#applyDepth(x: number, y: number) {
 		let ids = this.#storage.getIdsByPosition(x, y);
 		let data = [...ids].map(id => this.#storage.getById(id));
 
@@ -216,7 +215,7 @@ export default class RlDisplay extends HTMLElement {
 	}
 }
 
-function mergeTiming(options, timing) {
+function mergeTiming(options, timing?: Timing) {
 	if (timing) {
 		if (typeof(timing) == "number") {
 			options.duration = timing;
@@ -226,12 +225,12 @@ function mergeTiming(options, timing) {
 	}
 }
 
-async function waitAndCommit(a) {
+async function waitAndCommit(a: Animation) {
 	await a.finished;
-	a.effect.target.isConnected && a.commitStyles();
+	(a.effect as KeyframeEffect)!.target!.isConnected && a.commitStyles();
 }
 
-function createStyle(src) {
+function createStyle(src: string) {
 	let style = document.createElement("style");
 	style.textContent = src;
 	return style;
