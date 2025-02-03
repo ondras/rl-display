@@ -1,8 +1,13 @@
+MAIN := src/rl-display.ts
+
 rl-display.js: src/*.ts
-	deno run -A jsr:@orgsoft/dsbuild --in src/rl-display.ts --out $@
+	deno run -A jsr:@orgsoft/dsbuild --in $(MAIN) --out $@
 
 test:
-	deno test --no-check src
+	deno test src
 
 doc:
-	deno doc --html src/rl-display.ts
+	deno doc --html $(MAIN)
+
+check:
+	deno check $(MAIN)

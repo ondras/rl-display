@@ -9,6 +9,11 @@ interface Visual {
 	bg?: string;
 }
 
+interface DrawOptions {
+	id?: Id;
+	zIndex?: number;
+}
+
 
 const EFFECTS = {
 	"pulse": {
@@ -87,7 +92,7 @@ export default class RlDisplay extends HTMLElement {
 	}
 
 	scaleTo(scale: number, timing?: Timing) {
-		let options = {duration:300, fill:"both"};
+		let options = {duration:300, fill:"both" as FillMode};
 		mergeTiming(options, timing);
 		let a = this.animate([{"--scale": scale}], options);
 		return waitAndCommit(a);
@@ -99,7 +104,7 @@ export default class RlDisplay extends HTMLElement {
 			"--pan-dx": (cols-1)/2 - x,
 			"--pan-dy": (rows-1)/2 - y
 		}
-		let options = {duration:300, fill:"both"};
+		let options = {duration:300, fill:"both" as FillMode};
 		mergeTiming(options, timing);
 		let a = this.animate([props], options);
 		return waitAndCommit(a);
@@ -113,7 +118,7 @@ export default class RlDisplay extends HTMLElement {
 	/**
 	 * Draws one character (and optionally removes it from its previous position).
 	 */
-	draw(x: number, y: number, visual: Visual, options={}) {
+	draw(x: number, y: number, visual: Visual, options: Partial<DrawOptions>={}) {
 		let id = options.id || Math.random();
 		let zIndex = options.zIndex || 0;
 
@@ -142,7 +147,7 @@ export default class RlDisplay extends HTMLElement {
 
 	async move(id: Id, x: number, y: number, timing?: Timing) {
 		let data = this.#storage.getById(id);
-		// fixme if none
+		if (!data) { return; } // fixme if none
 
 		let existing = this.#storage.getIdByPosition(x, y, data.zIndex);
 		if (existing && existing != id) { this.delete(existing); }
@@ -156,7 +161,7 @@ export default class RlDisplay extends HTMLElement {
 			"--y": y
 		};
 
-		let options = {duration:150, fill:"both"};
+		let options = {duration:150, fill:"both" as FillMode};
 		mergeTiming(options, timing);
 		let a = data.node.animate([props], options);
 		await waitAndCommit(a);
@@ -181,14 +186,16 @@ export default class RlDisplay extends HTMLElement {
 		// FIXME
 	}
 
-	fx(id: Id, keyframes: string | Keyframe[] | PropertyIndexedKeyframes, options?: Timing) {
+	fx(id: Id, keyframes: (keyof typeof EFFECTS) | Keyframe[] | PropertyIndexedKeyframes, options?: Timing) {
 		let record = this.#storage.getById(id);
-		// fixme if none
+		if (!record) { return; } // fixme if none
+
 		if (typeof(keyframes) == "string") {
-			options = options || EFFECTS[keyframes].options;
-			keyframes = EFFECTS[keyframes].keyframes;
+			let def = EFFECTS[keyframes];
+			return record.node.animate(def.keyframes, options || def.options);
+		} else {
+			return record.node.animate(keyframes, options);
 		}
-		return record.node.animate(keyframes, options);
 	}
 
 	connectedCallback() {
@@ -206,7 +213,7 @@ export default class RlDisplay extends HTMLElement {
 
 	#applyDepth(x: number, y: number) {
 		let ids = this.#storage.getIdsByPosition(x, y);
-		let data = [...ids].map(id => this.#storage.getById(id));
+		let data = [...ids].map(id => this.#storage.getById(id)!);
 
 		let maxZindex = -1/0;
 		data.forEach(data => maxZindex = Math.max(maxZindex, data.zIndex));
@@ -217,7 +224,7 @@ export default class RlDisplay extends HTMLElement {
 	}
 }
 
-function mergeTiming(options, timing?: Timing) {
+function mergeTiming(options: KeyframeAnimationOptions, timing?: Timing) {
 	if (timing) {
 		if (typeof(timing) == "number") {
 			options.duration = timing;
@@ -310,8 +317,8 @@ const PRIVATE_STYLE = `
 customElements.define("rl-display", RlDisplay);
 document.head.append(createStyle(PUBLIC_STYLE));
 
-function updateProperties(node: HTMLElement, props: Record<string, string>) {
-	for (let key in props) { node.style.setProperty(key, props[key]); }
+function updateProperties(node: HTMLElement, props: Record<string, string | number>) {
+	for (let key in props) { node.style.setProperty(key, props[key] as string); }
 }
 
 function updateVisual(node: HTMLElement, visual: Visual) {
