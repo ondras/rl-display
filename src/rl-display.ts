@@ -1,20 +1,29 @@
 import { ArrayStorage as Storage } from "./storage.ts";
 
-type Timing = number | KeyframeAnimationOptions;
-type Id = any;
+/** Optional timing data for animated methods */
+export type Timing = number | KeyframeAnimationOptions;
 
-interface Visual {
-	ch?: string;
-	fg?: string;
-	bg?: string;
+/** Entity Id can by any JS value */
+export type Id = any;
+
+/** Definition of visual properties for a drawn character */
+export interface Visual {
+	/** character */        ch?: string;
+	/** foreground color */ fg?: string;
+	/** background color */ bg?: string;
 }
 
-interface DrawOptions {
+/** Additional optional options for the draw() method */
+export interface DrawOptions {
+	/** id for animation/move referencing */
 	id?: Id;
+
+	/** depth */
 	zIndex?: number;
 }
 
-const EFFECTS = {
+/** Pre-built effects */
+export const EFFECTS = {
 	"pulse": {
 		keyframes: {
 			scale: [1, 1.6, 1],
@@ -54,12 +63,14 @@ const EFFECTS = {
 export default class RlDisplay extends HTMLElement {
 	#storage = new Storage<Id, {node:HTMLElement}>();
 	#canvas = document.createElement("div");
+
+	/** By default, only the top-most character is draw. Set overlap=true to draw all of them. */
 	overlap = false;
 
 	/**
 	 * Computes an optimal character size if we want to fit a given number of characters into a given area.
 	 */
-	static computeTileSize(tileCount: number[], area: number[], aspectRatioRange: number[]) {
+	static computeTileSize(tileCount: number[], area: number[], aspectRatioRange: number[]): number[] {
 		let w = Math.floor(area[0]/tileCount[0]);
 		let h = Math.floor(area[1]/tileCount[1]);
 		let ar = w/h;
@@ -78,20 +89,22 @@ export default class RlDisplay extends HTMLElement {
 	}
 
 	/** Number of columns (characters in horizontal direction) */
-	get cols() { return Number(this.style.getPropertyValue("--cols")) || 20; }
+	get cols(): number { return Number(this.style.getPropertyValue("--cols")) || 20; }
 	set cols(cols) { this.style.setProperty("--cols", String(cols)); }
 
 	/** Number of rows (characters in vertical direction) */
-	get rows() { return Number(this.style.getPropertyValue("--rows")) || 10; }
+	get rows(): number { return Number(this.style.getPropertyValue("--rows")) || 10; }
 	set rows(rows) { this.style.setProperty("--rows", String(rows)); }
 
-	scaleTo(scale: number, timing?: Timing) {
+	/** Set the zoom amount, maintaining the position set by panTo() */
+	scaleTo(scale: number, timing?: Timing): Promise<void> {
 		let options = mergeTiming({duration:300, fill:"both" as FillMode}, timing);
 		let a = this.animate([{"--scale": scale}], options);
 		return waitAndCommit(a);
 	}
 
-	panTo(x: number, y: number, timing?: Timing) {
+	/** Center the viewport above a given position */
+	panTo(x: number, y: number, timing?: Timing): Promise<void> {
 		const { cols, rows } = this;
 		let props = {
 			"--pan-dx": (cols-1)/2 - x,
@@ -102,7 +115,8 @@ export default class RlDisplay extends HTMLElement {
 		return waitAndCommit(a);
 	}
 
-	panToCenter(timing?: Timing) {
+	/** Reset the viewport back to the center of the canvas */
+	panToCenter(timing?: Timing): Promise<void> {
 		const { cols, rows } = this;
 		return this.panTo((cols-1)/2, (rows-1)/2, timing);
 	}
@@ -110,7 +124,7 @@ export default class RlDisplay extends HTMLElement {
 	/**
 	 * Draws one character (and optionally removes it from its previous position).
 	 */
-	draw(x: number, y: number, visual: Visual, options: Partial<DrawOptions>={}) {
+	draw(x: number, y: number, visual: Visual, options: Partial<DrawOptions>={}): Id {
 		let id = options.id || Math.random();
 		let zIndex = options.zIndex || 0;
 
@@ -137,7 +151,8 @@ export default class RlDisplay extends HTMLElement {
 		return id;
 	}
 
-	async move(id: Id, x: number, y: number, timing?: Timing) {
+	/** Move a previously drawn character to a different position */
+	async move(id: Id, x: number, y: number, timing?: Timing): Promise<void> {
 		let data = this.#storage.getById(id);
 		if (!data) { return; } // fixme if none
 
@@ -159,11 +174,13 @@ export default class RlDisplay extends HTMLElement {
 		this.#applyDepth(x, y);
 	}
 
+	/** Remove a character from a position (without requiring its id) */
 	clear(x: number, y: number, zIndex=0) {
 		let id = this.#storage.getIdByPosition(x, y, zIndex);
 		if (id) { this.delete(id); }
 	}
 
+	/** Remove a character from anywhere, based on its id */
 	delete(id: Id) {
 		let data = this.#storage.getById(id);
 		if (data) {
@@ -173,11 +190,13 @@ export default class RlDisplay extends HTMLElement {
 		}
 	}
 
+	/** @ignore */
 	clearAll() {
 		// FIXME
 	}
 
-	fx(id: Id, keyframes: (keyof typeof EFFECTS) | Keyframe[] | PropertyIndexedKeyframes, options?: Timing) {
+	/** Apply an animation effect. Either a pre-built string or a standardized Keyframe definition. */
+	fx(id: Id, keyframes: (keyof typeof EFFECTS) | Keyframe[] | PropertyIndexedKeyframes, options?: Timing): Animation | undefined {
 		let record = this.#storage.getById(id);
 		if (!record) { return; } // fixme if none
 
@@ -189,6 +208,7 @@ export default class RlDisplay extends HTMLElement {
 		}
 	}
 
+	/** @ignore */
 	connectedCallback() {
 		this.shadowRoot!.replaceChildren(createStyle(PRIVATE_STYLE), this.#canvas);
 		this.cols = this.cols;
