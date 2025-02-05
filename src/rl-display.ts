@@ -54,7 +54,7 @@ const EFFECTS = {
 export default class RlDisplay extends HTMLElement {
 	#storage = new Storage<Id, {node:HTMLElement}>();
 	#canvas = document.createElement("div");
-	#canvasSize = [20, 10];
+	overlap = false;
 
 	/**
 	 * Computes an optimal character size if we want to fit a given number of characters into a given area.
@@ -78,18 +78,12 @@ export default class RlDisplay extends HTMLElement {
 	}
 
 	/** Number of columns (characters in horizontal direction) */
-	get cols() { return this.#canvasSize[0]; }
-	set cols(cols) {
-		this.#canvasSize[0] = cols;
-		this.style.setProperty("--cols", String(cols));
-	}
+	get cols() { return Number(this.style.getPropertyValue("--cols")) || 20; }
+	set cols(cols) { this.style.setProperty("--cols", String(cols)); }
 
 	/** Number of rows (characters in vertical direction) */
-	get rows() { return this.#canvasSize[1]; }
-	set rows(rows) {
-		this.#canvasSize[1] = rows;
-		this.style.setProperty("--rows", String(rows));
-	}
+	get rows() { return Number(this.style.getPropertyValue("--rows")) || 10; }
+	set rows(rows) { this.style.setProperty("--rows", String(rows)); }
 
 	scaleTo(scale: number, timing?: Timing) {
 		let options = mergeTiming({duration:300, fill:"both" as FillMode}, timing);
@@ -196,19 +190,14 @@ export default class RlDisplay extends HTMLElement {
 	}
 
 	connectedCallback() {
-		const { shadowRoot } = this;
-
-		// forward js->css props
+		this.shadowRoot!.replaceChildren(createStyle(PRIVATE_STYLE), this.#canvas);
 		this.cols = this.cols;
 		this.rows = this.rows;
-
-		shadowRoot!.replaceChildren(
-			createStyle(PRIVATE_STYLE),
-			this.#canvas
-		);
 	}
 
 	#applyDepth(x: number, y: number) {
+		if (this.overlap) { return; }
+
 		let ids = this.#storage.getIdsByPosition(x, y);
 		let data = [...ids].map(id => this.#storage.getById(id)!);
 

@@ -42,10 +42,15 @@ p, li {
 li code:first-child { font-weight: bold; }
 
 x-ample {
-	width: 80%;
+	width: 85%;
 	margin: auto;
 	tab-size: 4;
 	margin-bottom: 2em;
+	border-left: 2px solid #941;
+	padding-left: 8px;
+
+	&::part(code) { cursor: pointer; }
+	&::part(code):hover { background-color: rgba(0 0 0 / 0.1); }
 }
 
 @media (min-width: 1200px) {

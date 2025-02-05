@@ -95,7 +95,10 @@ return [d1, " ", d2, " ", d3]
 
 <script type="application/x-ample">
 let display = document.createElement("rl-display");
-display.draw(10, 5, {ch:"@"});
+display.rows = 3;
+display.cols = 11;
+
+display.draw(5, 1, {ch:"@"});
 
 display.style.color = "hotpink";
 display.style.backgroundColor = "olivedrab";
@@ -243,21 +246,22 @@ while (true) {
 let utils = await import(new URL("utils.js", location));
 
 let display = document.createElement("rl-display");
+display.cols = 11;
 yield display;
 
-display.draw(5, 5, {ch:"@", fg:"red"}, {id:"player"});
+display.draw(4, 5, {ch:"@", fg:"red"}, {id:"player"});
 let goblin = display.draw(7, 3, {ch:"g", fg:"lime"});
 
 while (true) {
 	await utils.sleep(1000);
 	await Promise.all([
-		display.move("player", 5, 3),
+		display.move("player", 4, 3),
 		display.move(goblin, 7, 5)
 	]);
 
 	await utils.sleep(1000);
 	await Promise.all([
-		display.move("player", 5, 5),
+		display.move("player", 4, 5),
 		display.move(goblin, 7, 3)
 	]);
 }
@@ -280,7 +284,8 @@ while (true) {
 let utils = await import(new URL("utils.js", location));
 
 let display = document.createElement("rl-display");
-display.draw(10, 5, {ch:"@", fg:"cyan"}, {id:"player"});
+display.rows = 7;
+display.draw(10, 3, {ch:"@", fg:"cyan"}, {id:"player"});
 
 let buttons = ["fade-in", "fade-out", "pulse", "explode"].map(fx => {
 	let button = document.createElement("button");
@@ -299,9 +304,11 @@ return [display, br, ...buttons];
 let utils = await import(new URL("utils.js", location));
 
 let display = document.createElement("rl-display");
+display.cols = 11;
+display.rows = 5;
 yield display;
 
-let money = display.draw(10, 5, {ch:"$", fg:"goldenrod"});
+let money = display.draw(5, 2, {ch:"$", fg:"goldenrod"});
 let keyframes = {
 	rotate: ["0deg", "30deg", "-50deg", "180deg"]
 }
@@ -338,12 +345,13 @@ while (true) {
 
 <script type="application/x-ample">
 let display = document.createElement("rl-display");
+display.rows = 3;
 yield display;
 
-display.draw(6, 5, {ch:"@", fg:"red"}, {id:"player"});
+display.draw(6, 1, {ch:"@", fg:"red"}, {id:"player"});
 while (true) {
-	await display.move("player", 14, 5, 1500);
-	await display.move("player", 6, 5, {duration:500});
+	await display.move("player", 14, 1, 1500);
+	await display.move("player", 6, 1, {duration:500});
 }
 </script>
 
@@ -351,8 +359,10 @@ while (true) {
 
 <script type="application/x-ample">
 let display = document.createElement("rl-display");
+display.cols = 11;
+display.rows = 5;
 
-let money = display.draw(10, 5, {ch:"$", fg:"goldenrod"});
+let money = display.draw(5, 2, {ch:"$", fg:"goldenrod"});
 let keyframes = {rotate: ["0deg", "360deg"]}
 let timing = {duration: 1000, iterations: Infinity};
 
@@ -481,9 +491,26 @@ function sync() {
 }
 sync();
 
-return [width.labels[0], height.labels[0], display];
+return [width.parentElement, height.parentElement, display];
 </script>
 
+<p>In <a href="#depth-and-composition">Part 6</a>, we learned that one position can only display one character (the one with the largest <em>z-index</em>). However, by setting the <code>overlap</code> property, we can enable rendering all stacked characters together (ordered by their <em>z-index</em>). This might be useful in some scenarios as an additional paiting effect.</p>
+
+<script type="application/x-ample">
+let RLDisplay = customElements.get("rl-display");
+
+let display = new RLDisplay();
+display.cols = 11;
+display.rows = 5;
+display.overlap = true;
+
+let colors = ["red", "lime", "blue", "yellow"];
+"▘▖▗▝".split("").forEach((ch, zIndex) => {
+	let fg = colors[zIndex];
+	display.draw(5, 2, {ch, fg}, {zIndex});
+});
+return display;
+</script>
 
 <h2 id="further-reading">Part 8: further reading</h2>
 
