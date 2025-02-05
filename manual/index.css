@@ -53,6 +53,13 @@ x-ample {
 	&::part(code):hover { background-color: rgba(0 0 0 / 0.1); }
 }
 
+footer {
+	margin-top: 3em;
+	border-top: 1px solid #000;
+	padding-top: 1em;
+	text-align: center;
+}
+
 @media (min-width: 1200px) {
 	t-o-c {
 		position: fixed;
