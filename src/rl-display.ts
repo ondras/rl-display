@@ -93,8 +93,7 @@ export default class RlDisplay extends HTMLElement {
 	}
 
 	scaleTo(scale: number, timing?: Timing) {
-		let options = {duration:300, fill:"both" as FillMode};
-		mergeTiming(options, timing);
+		let options = mergeTiming({duration:300, fill:"both" as FillMode}, timing);
 		let a = this.animate([{"--scale": scale}], options);
 		return waitAndCommit(a);
 	}
@@ -105,8 +104,7 @@ export default class RlDisplay extends HTMLElement {
 			"--pan-dx": (cols-1)/2 - x,
 			"--pan-dy": (rows-1)/2 - y
 		}
-		let options = {duration:300, fill:"both" as FillMode};
-		mergeTiming(options, timing);
+		let options = mergeTiming({duration:300, fill:"both" as FillMode}, timing);
 		let a = this.animate([props], options);
 		return waitAndCommit(a);
 	}
@@ -162,9 +160,7 @@ export default class RlDisplay extends HTMLElement {
 			"--x": x,
 			"--y": y
 		};
-
-		let options = {duration:150, fill:"both" as FillMode};
-		mergeTiming(options, timing);
+		let options = mergeTiming({duration:150, fill:"both" as FillMode}, timing);
 		let a = data.node.animate([props], options);
 		await waitAndCommit(a);
 		this.#applyDepth(x, y);
@@ -234,6 +230,7 @@ function mergeTiming(options: KeyframeAnimationOptions, timing?: Timing) {
 			Object.assign(options, timing);
 		}
 	}
+	return options;
 }
 
 async function waitAndCommit(a: Animation) {
