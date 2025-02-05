@@ -14,7 +14,6 @@ interface DrawOptions {
 	zIndex?: number;
 }
 
-
 const EFFECTS = {
 	"pulse": {
 		keyframes: {
@@ -82,14 +81,14 @@ export default class RlDisplay extends HTMLElement {
 	get cols() { return this.#canvasSize[0]; }
 	set cols(cols) {
 		this.#canvasSize[0] = cols;
-		this.style.setProperty("--canvas-width", String(cols));
+		this.style.setProperty("--cols", String(cols));
 	}
 
 	/** Number of rows (characters in vertical direction) */
 	get rows() { return this.#canvasSize[1]; }
 	set rows(rows) {
 		this.#canvasSize[1] = rows;
-		this.style.setProperty("--canvas-height", String(rows));
+		this.style.setProperty("--rows", String(rows));
 	}
 
 	scaleTo(scale: number, timing?: Timing) {
@@ -124,7 +123,7 @@ export default class RlDisplay extends HTMLElement {
 		let existing = this.#storage.getIdByPosition(x, y, zIndex);
 		if (existing && existing != id) { this.delete(existing); }
 
-		let node;
+		let node: HTMLElement;
 		let data = this.#storage.getById(id);
 		if (data) {
 			// fixme applyDepth na stare pozici
@@ -294,8 +293,8 @@ const PRIVATE_STYLE = `
 #canvas {
 	flex: none;
 	position: relative;
-	width: calc(var(--tile-width) * var(--canvas-width));
-	height: calc(var(--tile-height) * var(--canvas-height));
+	width: calc(var(--tile-width) * var(--cols));
+	height: calc(var(--tile-height) * var(--rows));
 	scale: var(--scale);
 	translate:
 	    calc(var(--tile-width) * var(--pan-dx) * var(--scale))
