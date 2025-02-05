@@ -31,7 +31,6 @@ const EFFECTS = {
 		keyframes: { opacity: [1, 0]},
 		options: 300
 	},
-
 	"explode": {
 		keyframes: [
 			{scale:0.9, opacity:1},
@@ -79,12 +78,14 @@ export default class RlDisplay extends HTMLElement {
 		this.#canvas.id = "canvas";
 	}
 
+	/** Number of columns (characters in horizontal direction) */
 	get cols() { return this.#canvasSize[0]; }
 	set cols(cols) {
 		this.#canvasSize[0] = cols;
 		this.style.setProperty("--canvas-width", String(cols));
 	}
 
+	/** Number of rows (characters in vertical direction) */
 	get rows() { return this.#canvasSize[1]; }
 	set rows(rows) {
 		this.#canvasSize[1] = rows;
@@ -138,7 +139,7 @@ export default class RlDisplay extends HTMLElement {
 		}
 
 		updateVisual(node, visual);
-		updateProperties(node, {"--x":x, "--y":y, zIndex});
+		updateProperties(node, {"--x":x, "--y":y, "z-index":zIndex});
 
 		this.#applyDepth(x, y);
 
@@ -155,6 +156,7 @@ export default class RlDisplay extends HTMLElement {
 		let { x:oldX, y:oldY } = data;
 		this.#storage.update(id, {x, y});
 		this.#applyDepth(oldX, oldY);
+		data.node.hidden = false; // might have been hidden before; show it during the animation
 
 		let props = {
 			"--x": x,
@@ -303,6 +305,7 @@ const PRIVATE_STYLE = `
 	    calc(var(--tile-height) * var(--pan-dy) * var(--scale));
 
 	div {
+		display: block; /* not hidden with [hidden] */
 		position: absolute;
 		width: var(--tile-width);
 		text-align: center;
@@ -310,6 +313,8 @@ const PRIVATE_STYLE = `
 		top: calc(var(--tile-height) * var(--y));
 		font-size: calc(var(--tile-height));
 		line-height: 1;
+
+		&[hidden] { color: transparent !important; }
 	}
 }
 `;

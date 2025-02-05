@@ -31,6 +31,8 @@ await display.scaleTo(2);
 //await display.panToCenter();
 //await display.scaleTo(1);
 
+display.draw(7, 5, {ch:".", fg:"yellow", bg:"cyan"}, {zIndex:2});
+
 document.querySelector(`[name="3"]`).addEventListener("click", _ => display.scaleTo(3));
 document.querySelector(`[name="2"]`).addEventListener("click", _ => display.scaleTo(2));
 document.querySelector(`[name="1"]`).addEventListener("click", _ => display.scaleTo(1));

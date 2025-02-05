@@ -3,8 +3,8 @@
 	<head>
 		<meta charset="utf-8" />
 		<title>&lt;rl-display&gt; manual</title>
+		<link rel="stylesheet" href="index.css" />
 		<link rel="stylesheet" id="ss-example" href="x-ample.css" />
-		<link rel="stylesheet" id="ss-manual" href="index.css" />
 		<link rel="stylesheet" id="ss-hljs" crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/base16/dirtysea.min.css" />
 		<link rel="icon" href="https://emojimage.toad.cz/@" />
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
@@ -485,11 +485,15 @@ return [width.labels[0], height.labels[0], display];
 </script>
 
 
+<h2 id="further-reading">Part 8: further reading</h2>
+
+
+
+
 <script type="module" src="./t-o-c.js"></script>
 <script type="module" src="../rl-display.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/ondras/x-ample@latest/x-ample.js"></script>
 <script type="module">
-import XAmple from "https://cdn.jsdelivr.net/gh/ondras/x-ample@latest/x-ample.js"
-
 function createStyleSheet(link) {
 	let stylesheet = new CSSStyleSheet();
 	[...link.sheet.cssRules].forEach(rule => stylesheet.insertRule(rule.cssText));
@@ -499,7 +503,7 @@ function createStyleSheet(link) {
 let hljsStylesheet = createStyleSheet(document.querySelector("#ss-hljs"));
 let exampleStylesheet = createStyleSheet(document.querySelector("#ss-example"));
 
-function createExamples() {
+function createExamples(XAmple) {
 	let selector = `script[type="application/x-ample"]`;
 	[...document.querySelectorAll(selector)].forEach(node => {
 		let example = XAmple.replaceScript(node);
@@ -509,7 +513,8 @@ function createExamples() {
 }
 
 await customElements.whenDefined("rl-display");
-createExamples();
+let XAmple = await customElements.whenDefined("x-ample");
+createExamples(XAmple);
 </script>
 	</body>
 </html>
