@@ -22,7 +22,7 @@ function init() {
 async function run() {
 	while (1) {
 		await beings.act();
-		await sleep(1000);
+		await sleep(500);
 	}
 }
 

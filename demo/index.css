@@ -6,4 +6,5 @@
 rl-display {
 	font-weight: bold;
 	font-family: metrickal;
+	--tile-width: 15px;
 }
