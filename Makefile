@@ -11,3 +11,8 @@ doc:
 
 check:
 	deno check $(MAIN)
+
+demo: demo/index.js
+
+demo/index.js: demo/src/*.ts
+	deno run -A jsr:@orgsoft/dsbuild --in demo/src/index.ts --out $@
