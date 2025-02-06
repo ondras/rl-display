@@ -1,0 +1,9 @@
+@font-face {
+	font-family: metrickal;
+	src: url("Metrickal-Regular.otf");
+}
+
+rl-display {
+	font-weight: bold;
+	font-family: metrickal;
+}
