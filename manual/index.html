@@ -2,6 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1.0" />
 		<title>&lt;rl-display&gt; manual</title>
 		<link rel="stylesheet" href="index.css" />
 		<link rel="stylesheet" id="ss-example" href="x-ample.css" />
@@ -288,7 +289,8 @@ let display = document.createElement("rl-display");
 display.rows = 7;
 display.draw(10, 3, {ch:"@", fg:"cyan"}, {id:"player"});
 
-let buttons = ["fade-in", "fade-out", "pulse", "jump", "explode"].map(fx => {
+let fx = ["fade-in", "fade-out", "pulse", "jump", "explode"];
+let buttons = fx.map(fx => {
 	let button = document.createElement("button");
 	button.textContent = fx;
 	button.onclick = () => display.fx("player", fx);

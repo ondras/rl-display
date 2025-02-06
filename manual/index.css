@@ -11,7 +11,7 @@ body {
 	margin: 0 auto;
 	padding: var(--padding);
 	line-height: var(--line-height);
-	background-color: #c85;
+	background-color: #c96;
 	hyphens: auto;
 }
 
@@ -42,11 +42,11 @@ p, li {
 li code:first-child { font-weight: bold; }
 
 x-ample {
-	width: 85%;
+	width: 90%;
 	margin: auto;
 	tab-size: 4;
 	margin-bottom: 2em;
-	border-left: 2px solid #941;
+	border-left: 2px solid #962;
 	padding-left: 8px;
 
 	&::part(code) { cursor: pointer; }
