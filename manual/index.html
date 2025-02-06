@@ -275,6 +275,7 @@ while (true) {
 	<li><code>"fade-in"</code></li>
 	<li><code>"fade-out"</code></li>
 	<li><code>"pulse"</code></li>
+	<li><code>"jump"</code></li>
 	<li><code>"explode"</code></li>
 </ul>
 
@@ -287,7 +288,7 @@ let display = document.createElement("rl-display");
 display.rows = 7;
 display.draw(10, 3, {ch:"@", fg:"cyan"}, {id:"player"});
 
-let buttons = ["fade-in", "fade-out", "pulse", "explode"].map(fx => {
+let buttons = ["fade-in", "fade-out", "pulse", "jump", "explode"].map(fx => {
 	let button = document.createElement("button");
 	button.textContent = fx;
 	button.onclick = () => display.fx("player", fx);

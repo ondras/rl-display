@@ -39,6 +39,15 @@ export const EFFECTS = {
 		keyframes: { opacity: [1, 0]},
 		options: 300
 	},
+	"jump": {
+		keyframes: [
+			{scale:1, translate:0},
+			{scale:"1.2 0.8", translate:"0 20%"},
+			{scale:"0.7 1.3", translate:"0 -70%"},
+			{scale:1, translate:0},
+		],
+		options: 600
+	},
 	"explode": {
 		keyframes: [
 			{scale:0.9, opacity:1},
