@@ -39,7 +39,9 @@ export function spawnOrc(): Being {
 	};
 }
 
-export function die(being: Being) {
+export async function die(being: Being) {
+	let fx = ["fade-out", "explode"];
+	await display.fx(being.id, fx.random())!.finished;
 	display.delete(being.id);
 
 	let positions = map.getFreePositionsAround(being.x, being.y);
@@ -76,7 +78,5 @@ export function die(being: Being) {
 			name: `${being.name} corpse`
 		}
 		items.spawn(corpse, being.x, being.y);
-
 	}
-
 }

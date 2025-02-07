@@ -8,7 +8,7 @@ import * as bestiary from "./bestiary.ts";
 let queue: bestiary.Being[] = [];
 
 let hero: bestiary.Being = {
-	name: "Hector the ...",
+	name: "Hector the Barbarian",
 	id: "hero", x:0, y:0,
 	visual: {
 		ch: "@",
@@ -37,11 +37,11 @@ function actIdle(being: bestiary.Being) {
 	return actMove(being, ...avail.random());
 }
 
-function actAttack(being: bestiary.Being, target: bestiary.Being) {
+async function actAttack(being: bestiary.Being, target: bestiary.Being) {
 	if (target == hero) {
 		return display.fx(hero.id, "pulse");
 	} else {
-		bestiary.die(target);
+		await bestiary.die(target);
 		let index = queue.indexOf(target);
 		queue.splice(index);
 		being.goal = {type:"idle"};
