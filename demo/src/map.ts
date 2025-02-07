@@ -2,11 +2,10 @@ import display from "./display.ts";
 import * as utils from "./utils.ts";
 
 
-type Position = [number, number];
-
 function createVisual(ch: string) {
 	let visual: any = {ch};
 	switch (ch) {
+		case "/": visual.fg = "saddlebrown"; break;
 		case ".": visual.fg = "#aaa"; break;
 		case "#": visual.fg = "#666"; break;
 	}
@@ -15,11 +14,19 @@ function createVisual(ch: string) {
 
 let wellKnown = {
 	hero: [0, 0],
+	spawn1: [],
+	spawn2: [],
+	spawn3: []
 }
-let freePositions: Position[] = [];
+let freePositions: utils.Position[] = [];
 
-export function getPosition(id: keyof typeof wellKnown): Position {
-	return wellKnown[id] as Position;
+export function getSpawn(index: number) {
+	let key = `spawn${index}`;
+	return wellKnown[key].random();
+}
+
+export function getPosition(id: keyof typeof wellKnown): utils.Position {
+	return wellKnown[id] as utils.Position;
 }
 
 export function getFreePositionsAround(x: number, y: number) {
@@ -36,9 +43,17 @@ function initChar(ch: string, x: number, y: number) {
 			wellKnown.hero = [x, y];
 			ch = ".";
 		break;
+
+		case "1":
+		case "2":
+		case "3":
+			let key = `spawn${ch}`;
+			wellKnown[key].push([x, y]);
+			ch = ".";
+		break;
 	}
 
-	if (ch == ".") { freePositions.push([x, y]); }
+	if (ch == "." || ch == "/") { freePositions.push([x, y]); }
 
 	let visual = createVisual(ch);
 	display.draw(x, y, visual);
