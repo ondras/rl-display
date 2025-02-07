@@ -1,3 +1,4 @@
+import * as map from "./map.ts";
 import * as utils from "./utils.ts";
 import * as items from "./items.ts";
 import display from "./display.ts";
@@ -40,13 +41,42 @@ export function spawnOrc(): Being {
 
 export function die(being: Being) {
 	display.delete(being.id);
-	const { weapon } = being;
 
-	let item = {
-		x: 0, y: 0,
-		visual: weapon.visual,
-		name: weapon.name,
-		weapon
+	let positions = map.getFreePositionsAround(being.x, being.y);
+	if (positions.length > 0 && Math.random() > 0.5) {
+		const { weapon } = being;
+
+		let item = {
+			x: 0, y: 0,
+			visual: weapon.visual,
+			name: weapon.name,
+			weapon
+		}
+		items.spawn(item, ...positions.random());
 	}
-	items.spawn(item, being.x, being.y);
+
+	let r = Math.random();
+	if (r > 0.667) {
+		let gold = {
+			x: 0, y: 0,
+			visual: {
+				ch: "$",
+				fg: "gold"
+			},
+			name: "gold"
+		}
+		items.spawn(gold, being.x, being.y);
+	} else if (r > 0.333) {
+		let corpse = {
+			x: 0, y: 0,
+			visual: {
+				ch: "%",
+				fg: being.visual.fg
+			},
+			name: `${being.name} corpse`
+		}
+		items.spawn(corpse, being.x, being.y);
+
+	}
+
 }
