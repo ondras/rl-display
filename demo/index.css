@@ -7,3 +7,8 @@ rl-display {
 	font-family: metrickal;
 	--tile-width: 15px;
 }
+
+#log {
+	height: 5lh;
+	overflow: hidden;
+}

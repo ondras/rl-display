@@ -28,11 +28,11 @@ const ELEMENTS = [
 	{name:"poison", color:"lime"}
 ];
 
-const PREFIXES = ["sharp", "rusty", "dangerous-looking"];
-const SUFFIXES = ["of vengeance", "of destiny", "of chaos"];
+const PREFIXES = ["Sharp", "Rusty", "Dangerous-looking"];
+const SUFFIXES = ["of Vengeance", "of Destiny", "of Chaos"];
 const SWORDS = ["sword", "dagger", "saber"];
 
-const MATERIALS = ["wooden", "oaken", "hickory"];
+const MATERIALS = ["Wooden", "Oaken", "Hickory"];
 const BOWS = ["short bow", "bow", "longbow"];
 
 
@@ -65,7 +65,7 @@ export function createWeapon(type: Weapon["type"]): Weapon {
 		case "sword": {
 			let parts: string[] = [];
 			let PREF_SUF_CHANCE = 0.5;
-			if (Math.random() < PREF_SUF_CHANCE) { parts.push(PREFIXES.random().capitalize()); }
+			if (Math.random() < PREF_SUF_CHANCE) { parts.push(PREFIXES.random()); }
 			parts.push(SWORDS.random());
 			if (Math.random() > PREF_SUF_CHANCE) { parts.push(SUFFIXES.random()); }
 

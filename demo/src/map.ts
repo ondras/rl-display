@@ -20,7 +20,7 @@ let wellKnown = {
 }
 let freePositions: utils.Position[] = [];
 
-export function getSpawn(index: number) {
+export function getSpawn(index: number): utils.Position {
 	let key = `spawn${index}`;
 	return wellKnown[key].random();
 }
