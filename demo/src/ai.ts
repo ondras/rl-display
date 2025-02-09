@@ -59,6 +59,17 @@ function actApproach(being: beings.Being, target: {x:number, y:number}) {
 	let closest: utils.Position[] = [];
 	let bestDist = 1/0;
 
+	let center = map.getPosition("center");
+	let distToTarget = utils.distL2(being.x, being.y, target.x, target.y);
+	let distToCenter = utils.distL2(being.x, being.y, ...center);
+	let targetToCenter = utils.distL2(target.x, target.y, ...center);
+
+	// yolo pathfinding
+	if (distToTarget > distToCenter && distToTarget > targetToCenter) {
+		// if target is far -> retarget to center
+		target = {x:center[0], y:center[1]};
+	}
+
 	positions.forEach(pos => {
 		let dist = utils.distL2(...pos, target.x, target.y);
 		if (dist < bestDist) {
@@ -111,6 +122,6 @@ export async function act() {
 }
 
 export function init() {
-	beings.spawn(beings.hero, ...map.getPosition("hero"));
+	beings.spawn(beings.hero, ...map.getPosition("center"));
 	queue.push(beings.hero);
 }

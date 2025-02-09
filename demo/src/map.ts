@@ -13,7 +13,7 @@ function createVisual(ch: string) {
 }
 
 let wellKnown = {
-	hero: [0, 0],
+	center: [0, 0],
 	spawn1: [],
 	spawn2: [],
 	spawn3: []
@@ -40,7 +40,7 @@ function initChar(ch: string, x: number, y: number) {
 
 	switch (ch) {
 		case "@":
-			wellKnown.hero = [x, y];
+			wellKnown.center = [x, y];
 			ch = ".";
 		break;
 
