@@ -42,7 +42,28 @@ export function formatAttack(attacker:Being, target:Being) {
 }
 
 export function formatPickup(being:Being, item:Item) {
-	return format("%A picks up %the.", being, item);
+	if (item.edible) {
+		let taste = ["Tastes good.", "Yummy!", "Tough but nutritious."].random();
+		return format(`%A eats %the. ${taste}`, being, item);
+	} else {
+		return format("%A picks up %the.", being, item);
+	}
+}
+
+export function formatDefense(being:Being) {
+	return format([
+		"%The evades the attack.",
+		"The attack misses.",
+		"%The's armor protects him.",
+	].random(), being);
+}
+
+export function formatDeath(being:Being) {
+	return format([
+		"%The is killed!",
+		"%The is hit and slain.",
+		"%The is killed on the spot."
+	].random(), being);
 }
 
 export function newline() {

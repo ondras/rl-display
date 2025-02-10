@@ -28,9 +28,13 @@ async function actAttack(being: beings.Being, target: beings.Being) {
 	log.add(text);
 
 	if (target == beings.hero) {
+		let text = log.formatDefense(target);
+		log.add(text);
 		return display.fx(target.id, "pulse");
 	} else {
 		await beings.die(target);
+		let text = log.formatDeath(target);
+		log.add(text);
 		let index = queue.indexOf(target);
 		queue.splice(index);
 		being.goal = {type:"idle"};

@@ -16,6 +16,7 @@ export interface Item {
 	y: number;
 	name: string;
 	weapon?: Weapon;
+	edible?: boolean;
 	visual: {
 		fg: string;
 		ch: string;

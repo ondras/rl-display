@@ -104,7 +104,8 @@ export async function die(being: Being) {
 				ch: "$",
 				fg: "gold"
 			},
-			name: "gold"
+			named: true,
+			name: "some gold"
 		}
 		items.spawn(gold, being.x, being.y);
 	} else if (r > 0.333) {
@@ -114,6 +115,7 @@ export async function die(being: Being) {
 				ch: "%",
 				fg: being.visual.fg
 			},
+			edible: true,
 			name: `${being.name} corpse`
 		}
 		items.spawn(corpse, being.x, being.y);
