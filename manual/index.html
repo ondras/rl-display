@@ -428,7 +428,7 @@ while (true) {
 }
 </script>
 
-<p>To remove by position, we need to supply a pair of coordinates to the <code>clear()</code> method. But because one position can hold many characters (with different z-indexes), we need to supply a z-index as well (as the third argument). This way, the id is no longer necessary:</p>
+<p>To remove by position, we need to supply a pair of coordinates to the <code>deleteAt()</code> method. But because one position can hold many characters (with different z-indexes), we need to supply a z-index as well (as the third argument). This way, the id is no longer necessary:</p>
 
 <script type="application/x-ample">
 let utils = await import(new URL("utils.js", location));
@@ -443,7 +443,7 @@ while (true) {
 	let y = 1 + Math.floor(Math.random() * (display.rows-2));
 	display.draw(x, y, {ch:"@", fg:"yellow"}, {zIndex:1});
 	await utils.sleep(1000);
-	display.clear(x, y, 1);
+	display.deleteAt(x, y, 1);
 }
 </script>
 

@@ -183,12 +183,6 @@ export default class RlDisplay extends HTMLElement {
 		this.#applyDepth(x, y);
 	}
 
-	/** Remove a character from a position (without requiring its id) */
-	clear(x: number, y: number, zIndex=0) {
-		let id = this.#storage.getIdByPosition(x, y, zIndex);
-		if (id) { this.delete(id); }
-	}
-
 	/** Remove a character from anywhere, based on its id */
 	delete(id: Id) {
 		let data = this.#storage.getById(id);
@@ -197,6 +191,12 @@ export default class RlDisplay extends HTMLElement {
 			this.#storage.delete(id);
 			this.#applyDepth(data.x, data.y);
 		}
+	}
+
+	/** Remove a character from a position (without requiring its id) */
+	deleteAt(x: number, y: number, zIndex=0) {
+		let id = this.#storage.getIdByPosition(x, y, zIndex);
+		if (id) { this.delete(id); }
 	}
 
 	/** @ignore */
