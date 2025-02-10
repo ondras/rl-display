@@ -11,6 +11,16 @@ body {
 	font-family: crimson pro;
 	line-height: 1.3;
 	font-size: 18px;
+	display: flex;
+	flex-direction: column;
+	width: 570px;
+}
+
+#log {
+	font-family: noto sans mono;
+	font-size: 80%;
+	background-color: #000;
+	color: #ccc;
 }
 
 h1, h2, h3 {

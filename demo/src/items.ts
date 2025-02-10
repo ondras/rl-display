@@ -55,10 +55,9 @@ export function spawn(item: Item, x: number, y: number) {
 }
 
 export function remove(item: Item) {
-	console.log("removing", item)
 	let index = items.indexOf(item);
 	items.splice(index, 1);
-	display.clear(item.x, item.y, 1);
+	display.deleteAt(item.x, item.y, 1);
 }
 
 export function createWeapon(type: Weapon["type"]): Weapon {
