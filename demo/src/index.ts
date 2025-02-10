@@ -13,7 +13,7 @@ function init() {
 async function run() {
 	while (1) {
 		await ai.act();
-		await utils.sleep(300);
+		await utils.sleep(200);
 	}
 }
 

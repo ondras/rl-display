@@ -30,7 +30,9 @@ export const hero: Being = {
 	},
 	goal: { type:"idle" } as Goal,
 	weapon: items.createWeapon("sword")
-}
+};
+
+export let enemy: Being;
 
 
 const ORCS = [
@@ -43,8 +45,17 @@ const ORCS = [
 ];
 
 export function spawnEnemy() {
-	let index = Math.floor(Math.random()*3) + 1;
-	let enemy!: Being;
+	let available = [1, 2, 3];
+	let withDistance = available.map(index => {
+		let position = map.getSpawn(index);
+		let distance = utils.distL2(hero.x, hero.y, ...position);
+		return {index, distance}
+	});
+
+	withDistance.sort((a, b) => a.distance - b.distance);
+	withDistance.shift();
+
+	let index = withDistance.random().index;
 
 	switch (index) {
 		case 1: enemy = spawnOrc(); break;
@@ -52,13 +63,9 @@ export function spawnEnemy() {
 		case 3: enemy = spawnOrc(); break;
 	}
 
-	hero.goal = { type:"attack", target:enemy };
 	enemy.goal = { type:"attack", target:hero }
-
 	spawn(enemy, ...map.getSpawn(index));
-	return enemy;
 }
-
 
 export function spawn(being: Being, x:number, y:number) {
 	being.x = x;

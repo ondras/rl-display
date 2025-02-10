@@ -5,6 +5,7 @@ import display from "./display.ts";
 export type Weapon = {
 	type: "sword" | "bow" | "wand";
 	name: string;
+	range: number;
 	visual: {
 		fg: string;
 		ch: string;
@@ -73,6 +74,7 @@ export function createWeapon(type: Weapon["type"]): Weapon {
 
 			return {
 				type,
+				range: 1,
 				name: parts.join(" "),
 				visual: {
 					ch: ["(", ")"].random(),
@@ -86,6 +88,7 @@ export function createWeapon(type: Weapon["type"]): Weapon {
 			return {
 				type,
 				name,
+				range: 4,
 				visual: {
 					ch: ["{", "}"].random(),
 					fg: "saddlebrown"
@@ -98,11 +101,39 @@ export function createWeapon(type: Weapon["type"]): Weapon {
 			return {
 				type,
 				name: `Wand of ${element.name}`,
+				range: 3,
 				visual: {
 					ch: "I",
 					fg: element.color
 				}
 			}
 		}
+	}
+}
+
+export async function shoot(weapon: Weapon, path: utils.Position[]) {
+	switch (weapon.type) {
+		case "sword":
+		case "bow": {
+			for (let i=0;i<path.length;i++) {
+				let position = path[i];
+				if (i) {
+					await display.move("arrow", ...position);
+				} else {
+					display.draw(...position, {ch:"-", fg:"saddlebrown"}, {id:"arrow", zIndex:4});
+				}
+			}
+			display.delete("arrow");
+		} break;
+
+		case "wand": {
+			let ids = path.map(position => {
+				return display.draw(...position, {ch:"*", fg:weapon.visual.fg}, {zIndex:4});
+			});
+
+			await utils.sleep(500);
+
+			ids.forEach(id => display.delete(id));
+		} break;
 	}
 }

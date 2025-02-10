@@ -5,11 +5,8 @@ import * as items from "./items.ts";
 import * as beings from "./beings.ts";
 import * as log from "./log.ts";
 
-// FIXME enemy se muze narodit na miste hero
-
 
 let queue: beings.Being[] = [];
-
 
 function actMove(being: beings.Being, x:number, y:number) {
 	being.x = x;
@@ -23,9 +20,11 @@ function actIdle(being: beings.Being) {
 	return actMove(being, ...avail.random());
 }
 
-async function actAttack(being: beings.Being, target: beings.Being) {
+async function actAttack(being: beings.Being, target: beings.Being, path?: utils.Position[]) {
 	let text = log.formatAttack(being, target);
 	log.add(text);
+
+	if (path) { await items.shoot(being.weapon, path); }
 
 	if (target == beings.hero) {
 		let text = log.formatDefense(target);
@@ -37,6 +36,10 @@ async function actAttack(being: beings.Being, target: beings.Being) {
 		log.add(text);
 		let index = queue.indexOf(target);
 		queue.splice(index);
+
+		beings.spawnEnemy();
+		queue.push(beings.enemy);
+
 		being.goal = {type:"idle"};
 	}
 }
@@ -56,6 +59,10 @@ function actPickup(being: beings.Being) {
 function isCloseTo(being: beings.Being, target: {x:number, y:number}, maxDist: number) {
 	let dist = utils.dist8(being.x, being.y, target.x, target.y);
 	return (dist <= maxDist);
+}
+
+function isPathFree(path: utils.Position[]) {
+	return path.every(position => map.isPositionFree(...position));
 }
 
 function actApproach(being: beings.Being, target: {x:number, y:number}) {
@@ -87,20 +94,29 @@ function actApproach(being: beings.Being, target: {x:number, y:number}) {
 }
 
 function actBeing(being: beings.Being) {
-	switch (being.goal.type) {
+	const { goal, weapon } = being;
+
+	switch (goal.type) {
 		case "idle": return actIdle(being); break;
 		case "attack":
-			if (isCloseTo(being, being.goal.target, 1)) {
-				return actAttack(being, being.goal.target);
+			if (isCloseTo(being, goal.target, weapon.range)) {
+				let path: utils.Position[] | undefined;
+
+				if (weapon.range > 1) {
+					path = utils.getPath(being.x, being.y, goal.target.x, goal.target.y);
+					if (!isPathFree(path)) { return actApproach(being, goal.target); }
+				}
+
+				return actAttack(being, goal.target, path);
 			} else {
-				return actApproach(being, being.goal.target);
+				return actApproach(being, goal.target);
 			}
 		break;
 		case "pickup":
-			if (isCloseTo(being, being.goal.target, 0)) {
+			if (isCloseTo(being, goal.target, 0)) {
 				return actPickup(being);
 			} else {
-				return actApproach(being, being.goal.target);
+				return actApproach(being, goal.target);
 			}
 		break;
 	}
@@ -119,8 +135,7 @@ export async function act() {
 		if (allItems.length > 0) {
 			being.goal = {type:"pickup", target:allItems[0]};
 		} else {
-			let enemy = beings.spawnEnemy();
-			queue.push(enemy);
+			being.goal = {type:"attack", target:beings.enemy};
 		}
 	}
 }
@@ -128,4 +143,7 @@ export async function act() {
 export function init() {
 	beings.spawn(beings.hero, ...map.getPosition("center"));
 	queue.push(beings.hero);
+
+	beings.spawnEnemy();
+	queue.push(beings.enemy);
 }

@@ -21,6 +21,9 @@ body {
 	font-size: 80%;
 	background-color: #000;
 	color: #ccc;
+	padding: 0 2px 2px 2px;
+	height: 5lh;
+	overflow: hidden;
 }
 
 h1, h2, h3 {
@@ -37,9 +40,4 @@ code {
 rl-display {
 	font-family: metrickal;
 	--tile-width: 15px;
-}
-
-#log {
-	height: 5lh;
-	overflow: hidden;
 }

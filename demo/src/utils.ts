@@ -18,6 +18,31 @@ export function distL2(x1: number, y1: number, x2: number, y2: number) {
 	return Math.sqrt(dx**2 + dy**2);
 }
 
+export function getPath(x1: number, y1: number, x2: number, y2: number) {
+	let dx = x2-x1;
+	let dy = y2-y1;
+
+	let steps: number;
+	if (Math.abs(dx) >= Math.abs(dy)) {
+		steps = Math.abs(dx);
+	} else {
+		steps = Math.abs(dy);
+	}
+
+	let stepx = dx/steps;
+	let stepy = dy/steps;
+
+	let x = x1, y = y1;
+	let path: Position[] = [];
+	for (let i=0; i<steps; i++) {
+		x += stepx;
+		y += stepy;
+		path.push([Math.round(x), Math.round(y)]);
+	}
+
+	return path;
+}
+
 export function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 declare global {

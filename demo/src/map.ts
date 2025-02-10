@@ -14,15 +14,14 @@ function createVisual(ch: string) {
 
 let wellKnown = {
 	center: [0, 0],
-	spawn1: [],
-	spawn2: [],
-	spawn3: []
+	spawn1: [0, 0],
+	spawn2: [0, 0],
+	spawn3: [0, 0]
 }
 let freePositions: utils.Position[] = [];
 
 export function getSpawn(index: number): utils.Position {
-	let key = `spawn${index}`;
-	return wellKnown[key].random();
+	return wellKnown[`spawn${index}`];
 }
 
 export function getPosition(id: keyof typeof wellKnown): utils.Position {
@@ -34,6 +33,10 @@ export function getFreePositionsAround(x: number, y: number) {
 		return utils.dist8(x, y, ...position) == 1;
 	})
 }
+
+export function isPositionFree(x: number, y: number) {{
+	return freePositions.some(fp => fp[0] == x && fp[1] == y);
+}}
 
 function initChar(ch: string, x: number, y: number) {
 	if (ch == " ") { return; }
@@ -47,8 +50,7 @@ function initChar(ch: string, x: number, y: number) {
 		case "1":
 		case "2":
 		case "3":
-			let key = `spawn${ch}`;
-			wellKnown[key].push([x, y]);
+			wellKnown[`spawn${ch}`] = [x, y];
 			ch = ".";
 		break;
 	}
