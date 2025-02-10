@@ -64,7 +64,6 @@ export class MapStorage<ID, D = {}> extends Storage<ID, D> {
 	}
 
 	update(id: ID, data: Partial<D & BaseData>) {
-		// update data storage
 		let currentData = this.getById(id)!;
 		Object.assign(currentData, data);
 

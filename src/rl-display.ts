@@ -1,4 +1,4 @@
-import { ArrayStorage as Storage } from "./storage.ts";
+import { MapStorage as Storage } from "./storage.ts";
 
 /** Optional timing data for animated methods */
 export type Timing = number | KeyframeAnimationOptions;
