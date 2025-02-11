@@ -3,8 +3,8 @@
 	<head>
 		<meta charset="utf-8" />
 		<style>
-			rl-display { font-weight: bold; }
-</style>
+			rl-display { font-weight: 600; }
+		</style>
 	</head>
 	<body>
 		<rl-display></rl-display>
@@ -19,5 +19,32 @@
 		<button name="pcenter">center</button>
 		<script type="module" src="../rl-display.js"></script>
 		<script type="module" src="index.js"></script>
+
+		<rl-display id="screenshot"></rl-display>
+		<script type="module">
+			let display = document.querySelector("#screenshot");
+			display.style.setProperty("--tile-width", "30px");
+			display.style.setProperty("--tile-height", "40px");
+			for (let i=0;i<display.cols;i++)
+				for (let j=0;j<display.rows;j++)
+					display.draw(i, j, {ch:"."})
+			display.draw(5, 5, {ch:"@", fg:"cyan"})
+			display.draw(7, 6, {ch:"$", fg:"gold"})
+			display.draw(8, 4, {ch:"&", fg:"red", bg:"darkred"})
+			let fg = "#555";
+			display.draw(3, 3, {ch:"#", fg})
+			display.draw(4, 3, {ch:"#", fg})
+			display.draw(5, 3, {ch:"#", fg})
+			display.draw(6, 3, {ch:"#", fg})
+			display.draw(7, 3, {ch:"#", fg})
+			display.draw(8, 3, {ch:"#", fg})
+			display.draw(9, 3, {ch:"#", fg})
+			display.draw(3, 4, {ch:"#", fg})
+			display.draw(2, 4, {ch:"#", fg})
+			display.draw(2, 6, {ch:"#", fg})
+			display.draw(3, 5, {ch:"+", fg:"saddlebrown"})
+			display.draw(3, 6, {ch:"#", fg})
+			display.draw(3, 7, {ch:"#", fg})
+		</script>
 	</body>
 </html>
