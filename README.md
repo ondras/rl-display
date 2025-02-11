@@ -1,5 +1,9 @@
 # &lt;rl-display&gt; – a roguelike display custom element
 
+<p align="center">
+  <img src="rl-display.png">
+</p>
+
 This small TS/JS library provides a simple API to draw HTML glyphs in a fashion similar to old-school TTY displays. The main focus is on aesthetic quality of rendering: the whole HTML+CSS rendering pipeline is leveraged, including vector fonts, browser-native animations and transitions and more.
 
 ## Links
