@@ -127,12 +127,14 @@ export async function shoot(weapon: Weapon, path: utils.Position[]) {
 		} break;
 
 		case "wand": {
-			let ids = path.map(position => {
-				return display.draw(...position, {ch:"*", fg:weapon.visual.fg}, {zIndex:4});
-			});
+			let ids: any[] = [];
+			for (let position of path) {
+				let id = display.draw(...position, {ch:"*", fg:weapon.visual.fg}, {zIndex:4});
+				ids.push(id);
+				await utils.sleep(50);
+			}
 
-			await utils.sleep(500);
-
+			await utils.sleep(450);
 			ids.forEach(id => display.delete(id));
 		} break;
 	}

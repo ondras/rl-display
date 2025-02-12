@@ -7,7 +7,7 @@ function createVisual(ch: string) {
 	switch (ch) {
 		case "/": visual.fg = "saddlebrown"; break;
 		case ".": visual.fg = "#aaa"; break;
-		case "#": visual.fg = "#666"; break;
+		case "#": visual.fg = "#777"; visual.bg = "#222"; break;
 	}
 	return visual;
 }
