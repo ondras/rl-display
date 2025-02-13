@@ -11,3 +11,13 @@ This small TS/JS library provides a simple API to draw HTML glyphs in a fashion 
   - [Interactive manual](https://ondras.github.io/rl-display/manual/)
   - [Demo](https://ondras.github.io/rl-display/demo/)
   - [API Docs](https://ondras.github.io/rl-display/docs/~/RlDisplay.html)
+
+## Development
+
+Toolchain: make, deno
+
+  - `make` to build the library
+  - `make doc` to autogenerate apidocs
+  - `make demo` to build the demopage
+  - `make test` to run tests
+  - `make check` to typecheck
