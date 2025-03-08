@@ -1,4 +1,7 @@
 {
+	"name": "@ondras/rl-display",
+	"version": "1.0.0",
+	"exports": "./src/rl-display.ts",
 	"compilerOptions": {
 		"lib": ["dom", "deno.ns"]
 	}

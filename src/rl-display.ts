@@ -99,11 +99,11 @@ export default class RlDisplay extends HTMLElement {
 
 	/** Number of columns (characters in horizontal direction) */
 	get cols(): number { return Number(this.style.getPropertyValue("--cols")) || 20; }
-	set cols(cols) { this.style.setProperty("--cols", String(cols)); }
+	set cols(cols: number) { this.style.setProperty("--cols", String(cols)); }
 
 	/** Number of rows (characters in vertical direction) */
 	get rows(): number { return Number(this.style.getPropertyValue("--rows")) || 10; }
-	set rows(rows) { this.style.setProperty("--rows", String(rows)); }
+	set rows(rows: number) { this.style.setProperty("--rows", String(rows)); }
 
 	/** Set the zoom amount, maintaining the position set by panTo() */
 	scaleTo(scale: number, timing?: Timing): Promise<void> {
