@@ -196,9 +196,9 @@ await display.panTo(10, 5);
 
 while (true) {
 	await utils.sleep(1000);
-	await display.scaleTo(3);
+	await display.panTo(10, 5, 3);
 	await utils.sleep(1000);
-	await display.scaleTo(1);
+	await display.panTo(10, 5, 1);
 }
 </script>
 
@@ -218,16 +218,9 @@ display.style.setProperty("height", `${7*20}px`);
 display.draw(12, 6, {ch:"@", fg:"red"});
 
 while (true) {
-	await Promise.all([
-		display.panTo(12, 6),
-		display.scaleTo(3)
-	]);
+	await display.panTo(12, 6, 3);
 	await utils.sleep(1000);
-
-	await Promise.all([
-		display.panTo(6, 3),
-		display.scaleTo(1)
-	]);
+	await display.panTo(6, 3, 1);
 	await utils.sleep(1000);
 }
 </script>

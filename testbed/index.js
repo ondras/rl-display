@@ -21,12 +21,31 @@ let id = display.draw(...position, {ch:"@", fg:"red"}, {zIndex:1});
 
 for (let x=0;x<display.cols;x++) {
 	for (let y=0;y<display.rows;y++) {
-		if (x > 0 && x < display.cols-1 && y > 0 && y < display.rows-1) continue;
+//		if (x > 0 && x < display.cols-1 && y > 0 && y < display.rows-1) continue;
+		if (x > 0 && x < display.cols-1 && y > 0 && y < display.rows-1) display.draw(x, y,  {ch:"."}); else
 		display.draw(x, y, {ch:"#"});
 	}
 }
-await display.panTo(...position);
+
+await display.panTo(...position, 1);
 await new Promise(resolve => setTimeout(resolve, 300));
+
+while (true) {
+	await Promise.all([
+//		display.scaleTo(3),
+		display.panTo(10, 5, 3)
+	]);
+
+	await new Promise(r => setTimeout(r, 500));
+
+	await Promise.all([
+//		display.scaleTo(1),
+		display.panTo(5, 5, 1)
+	]);
+
+	await new Promise(r => setTimeout(r, 500));
+}
+
 await display.scaleTo(2);
 //await display.panToCenter();
 //await display.scaleTo(1);

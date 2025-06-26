@@ -72,6 +72,7 @@ export const EFFECTS = {
 export default class RlDisplay extends HTMLElement {
 	#storage = new Storage<Id, {node:HTMLElement}>();
 	#canvas = document.createElement("div");
+	#scale = 1;
 
 	/** By default, only the top-most character is draw. Set overlap=true to draw all of them. */
 	overlap = false;
@@ -113,11 +114,12 @@ export default class RlDisplay extends HTMLElement {
 	}
 
 	/** Center the viewport above a given position */
-	panTo(x: number, y: number, timing?: Timing): Promise<void> {
+	panTo(x: number, y: number, scale=1, timing?: Timing): Promise<void> {
 		const { cols, rows } = this;
 		let props = {
-			"--pan-dx": (cols-1)/2 - x,
-			"--pan-dy": (rows-1)/2 - y
+			"--pan-dx": ((cols-1)/2 - x) * scale,
+			"--pan-dy": ((rows-1)/2 - y) * scale,
+			"--scale": scale
 		}
 		let options = mergeTiming({duration:300, fill:"both" as FillMode}, timing);
 		let a = this.animate([props], options);
@@ -127,7 +129,7 @@ export default class RlDisplay extends HTMLElement {
 	/** Reset the viewport back to the center of the canvas */
 	panToCenter(timing?: Timing): Promise<void> {
 		const { cols, rows } = this;
-		return this.panTo((cols-1)/2, (rows-1)/2, timing);
+		return this.panTo((cols-1)/2, (rows-1)/2, 1, timing);
 	}
 
 	/**
@@ -315,8 +317,8 @@ const PRIVATE_STYLE = `
 	height: calc(var(--tile-height) * var(--rows));
 	scale: var(--scale);
 	translate:
-	    calc(var(--tile-width) * var(--pan-dx) * var(--scale))
-	    calc(var(--tile-height) * var(--pan-dy) * var(--scale));
+	    calc(var(--tile-width) * var(--pan-dx))
+	    calc(var(--tile-height) * var(--pan-dy));
 
 	div {
 		display: block; /* not hidden with [hidden] */
