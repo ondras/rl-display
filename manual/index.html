@@ -132,7 +132,7 @@ return display;
 
 <p>Rendering a subset can be done in a straightforward manner, by manually computing the set of visible coordinates and drawing using an offset. This approach works, but becomes more difficult once you decide to move your camera. To facilitate easier rendering of smaller map subsets, <code>&lt;rl‑display&gt;</code> offers another approach: the panning viewport. Let's see how that works.</p>
 
-<p>When you adjust <code>display.cols</code> and <code>--tile-width</code>, you are influencing the display's final width indirectly. However, you are free to set the CSS width for the <code>&lt;rl‑display&gt;</code> element directly. Once you do that, you decouple what the user sees (the <em>viewport</em>, whose size is defined explicitly) and what is drawn on the <em>canvas</em> (individual characters rendered via <code>display.draw</code>). Most frequently, the viewport is smaller than the canvas, resulting in an <em>overflow</em> (which can be typically observed on a <code>&lt;textarea&gt;</code> HTML element with fixed size). By default, the viewport is centered over the canvas. This can be changed using the <code>panTo</code> call:</p>
+<p>When you adjust <code>display.cols</code> and <code>--tile-width</code>, you are influencing the display's final width indirectly. However, you are free to set the CSS width for the <code>&lt;rl‑display&gt;</code> element directly. Once you do that, you decouple what the user sees (the <em>viewport</em>, whose size is defined explicitly) and what is drawn on the <em>canvas</em> (individual characters rendered via <code>display.draw</code>). Often, the viewport is smaller than the canvas, resulting in an <em>overflow</em> (which can be typically observed on a <code>&lt;textarea&gt;</code> HTML element with fixed size). By default, the viewport is centered over the canvas. This can be changed using the <code>panTo</code> call:</p>
 
 <script type="application/x-ample">
 let utils = await import(new URL("utils.js", location));
@@ -180,7 +180,7 @@ while (true) {
 }
 </script>
 
-<p>The <code>&lt;rl‑display&gt;</code> element now behaves similarly to a regular web map. The last step to make the panning process even more fancy is to introduce <em>zooming</em>. Instead of drawing larger characters, we can temporarily scale up the whole display with the <code>scaleTo</code> method:</p>
+<p>The <code>&lt;rl‑display&gt;</code> element now behaves similarly to a regular web map. The last step to make the panning process even more fancy is to introduce <em>zooming</em>. Instead of drawing larger characters, we can temporarily scale up the whole display by a factor specified as the third argument to <code>panTo</code>:</p>
 
 <script type="application/x-ample">
 let utils = await import(new URL("utils.js", location));
@@ -202,9 +202,9 @@ while (true) {
 }
 </script>
 
-<p>Scaling uses a single numeric argument that specifies the final scaling ratio, one being the default zoom (where the characters are drawn at the size specified via <code>--tile-height</code>). Note that scaling maintains the viewport-to-canvas mapping established by the last <code>panTo</code> call.</p>
+<p>Using a scale value of <strong>one means the default zoom</strong> (where the characters are drawn at the size specified via <code>--tile-height</code>). It is possible to supply fractional values as well as values smaller than one (zooming out).</p>
 
-<p>Panning and scaling is animated and therefore asynchronous. These methods are returning <em>Promises</em>, so in order to combine panning and scaling, it can be useful to combine the retured values with <code>Promise.all</code>:</p>
+<p>Panning and scaling is animated and therefore asynchronous. It is possible (and encouraged) to combine both pan and scale changes into a single call:</p>
 
 <script type="application/x-ample">
 let utils = await import(new URL("utils.js", location));
@@ -323,7 +323,6 @@ while (true) {
 <p>Many operations performed on a <code>&lt;rl‑display&gt;</code> are animated and thus happen over a period of time. Durations (and other time-related properties) of these animations are configurable. Custom timing can be specified by providing an optional (last) argument to these methods:</p>
 
 <ul>
-	<li><code>scaleTo()</code></li>
 	<li><code>panTo()</code></li>
 	<li><code>panToCenter()</code></li>
 	<li><code>move()</code></li>

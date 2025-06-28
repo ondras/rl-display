@@ -7,15 +7,15 @@
   <meta name="doc-current-file" content="">
   <link rel="stylesheet" href=".&#x2F;styles.css">
   <link rel="stylesheet" href=".&#x2F;page.css">
-  <link id="ddocResetStylesheet" rel="stylesheet" href=".&#x2F;reset.css"><link href="./comrak.css" rel="stylesheet" /><link href="./prism.css" rel="stylesheet" /><script src="./prism.js"></script><script src=".&#x2F;search_index.js" defer></script>
-    <script src=".&#x2F;script.js" defer></script>
+  <link id="ddocResetStylesheet" rel="stylesheet" href=".&#x2F;reset.css"><link href="./comrak.css" rel="stylesheet" /><link href="./prism.css" rel="stylesheet" /><script src="./prism.js"></script><script src=".&#x2F;script.js" defer></script>
+  <script src=".&#x2F;darkmode_toggle.js"></script><script src=".&#x2F;search_index.js" defer></script>
     <script src=".&#x2F;fuse.js" defer></script>
     <script src=".&#x2F;search.js" defer></script></head>
 <body>
 <div class="ddoc">
-<div><nav class="top-0 sticky bg-white z-50 py-3 h-14" id="topnav">
+<div><nav id="topnav">
   <div class="h-full">
-    <div><ul class="breadcrumbs"><li><a href=".&#x2F;" class="contextLink">index</a></li><span class="text-[#0F172A]"><svg
+    <div class="flex items-center"><ul class="breadcrumbs"><li><a href=".&#x2F;" class="contextLink">index</a></li><span class="text-black dark:text-white"><svg
 	width="16"
 	height="16"
 	viewBox="0 0 16 16"
@@ -26,17 +26,37 @@
 </span><li>all symbols</li></ul>
 </div>
 
-      <input
-        type="text"
-        id="searchbar"
-        style="display: none;"
-        class="py-2 px-2.5 rounded text-sm border border-gray-300 bg-transparent" />
+    <div class="flex items-center gap-2">
+      <button id="theme-toggle" type="button" aria-label="Toggle dark mode" style="display: none;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M12 1.992a10 10 0 1 0 9.236 13.838c.341 -.82 -.476 -1.644 -1.298 -1.31a6.5 6.5 0 0 1 -6.864 -10.787l.077 -.08c.551 -.63 .113 -1.653 -.758 -1.653h-.266l-.068 -.006l-.06 -.002z" />
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class=hidden>
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M12 19a1 1 0 0 1 .993 .883l.007 .117v1a1 1 0 0 1 -1.993 .117l-.007 -.117v-1a1 1 0 0 1 1 -1z" />
+  <path d="M18.313 16.91l.094 .083l.7 .7a1 1 0 0 1 -1.32 1.497l-.094 -.083l-.7 -.7a1 1 0 0 1 1.218 -1.567l.102 .07z" />
+  <path d="M7.007 16.993a1 1 0 0 1 .083 1.32l-.083 .094l-.7 .7a1 1 0 0 1 -1.497 -1.32l.083 -.094l.7 -.7a1 1 0 0 1 1.414 0z" />
+  <path d="M4 11a1 1 0 0 1 .117 1.993l-.117 .007h-1a1 1 0 0 1 -.117 -1.993l.117 -.007h1z" />
+  <path d="M21 11a1 1 0 0 1 .117 1.993l-.117 .007h-1a1 1 0 0 1 -.117 -1.993l.117 -.007h1z" />
+  <path d="M6.213 4.81l.094 .083l.7 .7a1 1 0 0 1 -1.32 1.497l-.094 -.083l-.7 -.7a1 1 0 0 1 1.217 -1.567l.102 .07z" />
+  <path d="M19.107 4.893a1 1 0 0 1 .083 1.32l-.083 .094l-.7 .7a1 1 0 0 1 -1.497 -1.32l.083 -.094l.7 -.7a1 1 0 0 1 1.414 0z" />
+  <path d="M12 2a1 1 0 0 1 .993 .883l.007 .117v1a1 1 0 0 1 -1.993 .117l-.007 -.117v-1a1 1 0 0 1 1 -1z" />
+  <path d="M12 7a5 5 0 1 1 -4.995 5.217l-.005 -.217l.005 -.217a5 5 0 0 1 4.995 -4.783z" />
+</svg>
+</button>
+
+        <input
+          type="text"
+          id="searchbar"
+          style="display: none;"
+          class="py-2 px-2.5 mx-1 rounded text-sm border border-gray-300 bg-transparent dark:bg-gray-800 dark:border-gray-700"
+          />
+    </div>
   </div>
 </nav>
 <div id="searchResults"></div><div id="content">
-    <main><div class="space-y-7" id=""><section class="section" id="default">
-  <div>
-	  <h2 class="anchorable mb-1"><a href="#default" class="anchor" aria-label="Anchor" tabIndex="-1"><svg
+    <main><div class="space-y-7" id=""><section class="section"  id="default"><div>
+      <h2 class="anchorable mb-1"><a href="#default" class="anchor" aria-label="Anchor" tabIndex="-1"><svg
   width="16"
   height="16"
   viewBox="0 0 14 14"
@@ -58,37 +78,37 @@
   </defs>
 </svg>
 </a>
-<a href=".&#x2F;" class="contextLink">default</a></h2></div><div class="namespaceSection"><div id="namespace_drawoptions" class="namespaceItem" ><div class="docNodeKindIcon"><div class="text-Interface bg-Interface/15" title="Interface">I</div></div>
+<a href=".&#x2F;" class="contextLink">default</a></h2></div><div class="namespaceSection"><div id="namespace_drawoptions" class="namespaceItem" ><div class="docNodeKindIcon"><div class="text-Interface bg-Interface/15 dark:text-InterfaceDark dark:bg-InterfaceDark/15" title="Interface">I</div></div>
 <div class="namespaceItemContent">
 		    <a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;DrawOptions.html" title="DrawOptions">DrawOptions</a>
 
 	      <div class="namespaceItemContentDoc"><div class="markdown_summary"><p>Additional optional options for the draw() method</p>
 </div></div><ul class="namespaceItemContentSubItems"><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;DrawOptions.html#property_id">id</a></li><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;DrawOptions.html#property_zindex">zIndex</a></li></ul></div>
-    </div><div id="namespace_effects" class="namespaceItem" ><div class="docNodeKindIcon"><div class="text-Variable bg-Variable/15" title="Variable">v</div></div>
+    </div><div id="namespace_effects" class="namespaceItem" ><div class="docNodeKindIcon"><div class="text-Variable bg-Variable/15 dark:text-VariableDark dark:bg-VariableDark/15" title="Variable">v</div></div>
 <div class="namespaceItemContent">
 		    <a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;EFFECTS.html" title="EFFECTS">EFFECTS</a>
 
 	      <div class="namespaceItemContentDoc"><div class="markdown_summary"><p>Pre-built effects</p>
 </div></div><ul class="namespaceItemContentSubItems"><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;EFFECTS.html#property_explode">explode</a></li><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;EFFECTS.html#property_fade-in">fade-in</a></li><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;EFFECTS.html#property_fade-out">fade-out</a></li><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;EFFECTS.html#property_jump">jump</a></li><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;EFFECTS.html#property_pulse">pulse</a></li></ul></div>
-    </div><div id="namespace_id" class="namespaceItem" ><div class="docNodeKindIcon"><div class="text-TypeAlias bg-TypeAlias/15" title="Type Alias">T</div></div>
+    </div><div id="namespace_id" class="namespaceItem" ><div class="docNodeKindIcon"><div class="text-TypeAlias bg-TypeAlias/15 dark:text-TypeAliasDark dark:bg-TypeAliasDark/15" title="Type Alias">T</div></div>
 <div class="namespaceItemContent">
 		    <a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;Id.html" title="Id">Id</a>
 
 	      <div class="namespaceItemContentDoc"><div class="markdown_summary"><p>Entity Id can by any JS value</p>
 </div></div></div>
-    </div><div id="namespace_rldisplay" class="namespaceItem" ><div class="docNodeKindIcon"><div class="text-Class bg-Class/15" title="Class">c</div></div>
+    </div><div id="namespace_rldisplay" class="namespaceItem" ><div class="docNodeKindIcon"><div class="text-Class bg-Class/15 dark:text-ClassDark dark:bg-ClassDark/15" title="Class">c</div></div>
 <div class="namespaceItemContent">
 		    <a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;RlDisplay.html" title="RlDisplay">RlDisplay</a>
 
 	      <div class="namespaceItemContentDoc"><div class="markdown_summary"><p>The &lt;rl-display&gt; Custom Element. Uses Shadow DOM, contents are not visible. To show stuff, use its JS API.</p>
-</div></div><ul class="namespaceItemContentSubItems"><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;RlDisplay.html#accessor_cols">cols</a></li><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;RlDisplay.html#method_computetilesize_0">computeTileSize</a></li><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;RlDisplay.html#method_delete_0">delete</a></li><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;RlDisplay.html#method_deleteat_0">deleteAt</a></li><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;RlDisplay.html#method_draw_0">draw</a></li><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;RlDisplay.html#method_fx_0">fx</a></li><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;RlDisplay.html#method_move_0">move</a></li><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;RlDisplay.html#property_overlap">overlap</a></li><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;RlDisplay.html#method_panto_0">panTo</a></li><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;RlDisplay.html#method_pantocenter_0">panToCenter</a></li><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;RlDisplay.html#accessor_rows">rows</a></li><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;RlDisplay.html#method_scaleto_0">scaleTo</a></li></ul></div>
-    </div><div id="namespace_timing" class="namespaceItem" ><div class="docNodeKindIcon"><div class="text-TypeAlias bg-TypeAlias/15" title="Type Alias">T</div></div>
+</div></div><ul class="namespaceItemContentSubItems"><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;RlDisplay.html#accessor_cols">cols</a></li><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;RlDisplay.html#method_computetilesize_0">computeTileSize</a></li><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;RlDisplay.html#method_delete_0">delete</a></li><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;RlDisplay.html#method_deleteat_0">deleteAt</a></li><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;RlDisplay.html#method_draw_0">draw</a></li><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;RlDisplay.html#method_fx_0">fx</a></li><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;RlDisplay.html#method_move_0">move</a></li><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;RlDisplay.html#property_overlap">overlap</a></li><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;RlDisplay.html#method_panto_0">panTo</a></li><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;RlDisplay.html#method_pantocenter_0">panToCenter</a></li><li><a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;RlDisplay.html#accessor_rows">rows</a></li></ul></div>
+    </div><div id="namespace_timing" class="namespaceItem" ><div class="docNodeKindIcon"><div class="text-TypeAlias bg-TypeAlias/15 dark:text-TypeAliasDark dark:bg-TypeAliasDark/15" title="Type Alias">T</div></div>
 <div class="namespaceItemContent">
 		    <a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;Timing.html" title="Timing">Timing</a>
 
 	      <div class="namespaceItemContentDoc"><div class="markdown_summary"><p>Optional timing data for animated methods</p>
 </div></div></div>
-    </div><div id="namespace_visual" class="namespaceItem" ><div class="docNodeKindIcon"><div class="text-Interface bg-Interface/15" title="Interface">I</div></div>
+    </div><div id="namespace_visual" class="namespaceItem" ><div class="docNodeKindIcon"><div class="text-Interface bg-Interface/15 dark:text-InterfaceDark dark:bg-InterfaceDark/15" title="Interface">I</div></div>
 <div class="namespaceItemContent">
 		    <a href=".&#x2F;.&#x2F;.&#x2F;~&#x2F;Visual.html" title="Visual">Visual</a>
 

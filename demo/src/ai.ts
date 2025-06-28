@@ -11,7 +11,7 @@ let queue: beings.Being[] = [];
 function actMove(being: beings.Being, x:number, y:number) {
 	being.x = x;
 	being.y = y;
-	if (being == beings.hero) { display.panTo(x, y, 100); }
+	if (being == beings.hero) { display.panTo(x, y, 1, 100); }
 	return display.move(being.id, x, y, 100);
 }
 

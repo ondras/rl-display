@@ -30,31 +30,10 @@ for (let x=0;x<display.cols;x++) {
 await display.panTo(...position, 1);
 await new Promise(resolve => setTimeout(resolve, 300));
 
-while (true) {
-	await Promise.all([
-//		display.scaleTo(3),
-		display.panTo(10, 5, 3)
-	]);
-
-	await new Promise(r => setTimeout(r, 500));
-
-	await Promise.all([
-//		display.scaleTo(1),
-		display.panTo(5, 5, 1)
-	]);
-
-	await new Promise(r => setTimeout(r, 500));
-}
-
-await display.scaleTo(2);
-//await display.panToCenter();
-//await display.scaleTo(1);
+await display.panToCenter();
 
 display.draw(7, 5, {ch:".", fg:"yellow", bg:"cyan"}, {zIndex:2});
 
-document.querySelector(`[name="3"]`).addEventListener("click", _ => display.scaleTo(3));
-document.querySelector(`[name="2"]`).addEventListener("click", _ => display.scaleTo(2));
-document.querySelector(`[name="1"]`).addEventListener("click", _ => display.scaleTo(1));
 document.querySelector(`[name="p00"]`).addEventListener("click", _ => display.panTo(0, 0));
 document.querySelector(`[name="p10"]`).addEventListener("click", _ => display.panTo(1, 0));
 document.querySelector(`[name="p01"]`).addEventListener("click", _ => display.panTo(0, 1));

@@ -72,7 +72,6 @@ export const EFFECTS = {
 export default class RlDisplay extends HTMLElement {
 	#storage = new Storage<Id, {node:HTMLElement}>();
 	#canvas = document.createElement("div");
-	#scale = 1;
 
 	/** By default, only the top-most character is draw. Set overlap=true to draw all of them. */
 	overlap = false;
@@ -105,13 +104,6 @@ export default class RlDisplay extends HTMLElement {
 	/** Number of rows (characters in vertical direction) */
 	get rows(): number { return Number(this.style.getPropertyValue("--rows")) || 10; }
 	set rows(rows: number) { this.style.setProperty("--rows", String(rows)); }
-
-	/** Set the zoom amount, maintaining the position set by panTo() */
-	scaleTo(scale: number, timing?: Timing): Promise<void> {
-		let options = mergeTiming({duration:300, fill:"both" as FillMode}, timing);
-		let a = this.animate([{"--scale": scale}], options);
-		return waitAndCommit(a);
-	}
 
 	/** Center the viewport above a given position */
 	panTo(x: number, y: number, scale=1, timing?: Timing): Promise<void> {
