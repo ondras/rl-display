@@ -218,6 +218,14 @@ export default class RlDisplay extends HTMLElement {
 		this.rows = this.rows;
 	}
 
+	delegateEvent(e: Event): Id | undefined {
+		let path = e.composedPath();
+		let node = path.shift();
+		for (let [id, data] of this.#storage.entries()) {
+			if (data.node == node) { return id; }
+		}
+	}
+
 	#applyDepth(x: number, y: number) {
 		if (this.overlap) { return; }
 

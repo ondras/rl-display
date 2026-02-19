@@ -17,7 +17,7 @@ async function readKey() {
 
 let display = document.querySelector("rl-display");
 let position = [5, 5];
-let id = display.draw(...position, {ch:"@", fg:"red"}, {zIndex:1});
+let id = display.draw(...position, {ch:"@", fg:"red"}, {zIndex:1, id:"pc"});
 
 for (let x=0;x<display.cols;x++) {
 	for (let y=0;y<display.rows;y++) {
@@ -40,6 +40,9 @@ document.querySelector(`[name="p01"]`).addEventListener("click", _ => display.pa
 document.querySelector(`[name="p11"]`).addEventListener("click", _ => display.panTo(1, 1));
 document.querySelector(`[name="pcenter"]`).addEventListener("click", _ => display.panToCenter());
 
+display.addEventListener("click", e => {
+	console.log(display.delegateEvent(e));
+})
 
 while (true) {
 	let key = await readKey();

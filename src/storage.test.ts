@@ -1,4 +1,4 @@
-import { assertEquals, assertInstanceOf } from "jsr:@std/assert";
+import { assert, assertEquals, assertInstanceOf } from "jsr:@std/assert";
 import * as storage from "./storage.ts";
 
 
@@ -83,6 +83,20 @@ function test(ctor: StorageCtor) {
 
 		assertEquals(s.getIdByPosition(2, 3, 1), undefined);
 		assertEquals(s.getIdByPosition(3, 4, 2), "id");
+	});
+
+	Deno.test(L + "entries", () => {
+		let s = new ctor<{p:number}>();
+		s.add("id1", {x:2, y:3, zIndex:0, p:1});
+		s.add("id2", {x:3, y:4, zIndex:1, p:2});
+
+		let entries = [...s.entries()];
+		assertEquals(entries.length, 2);
+
+		entries.forEach(([id, data]) => {
+			assert(["id1", "id2"].includes(id));
+			assertEquals(s.getById(id), data);
+		});
 	});
 }
 
