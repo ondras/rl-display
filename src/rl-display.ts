@@ -1,5 +1,6 @@
 import { MapStorage as Storage } from "./storage.ts";
 
+
 /** Optional timing data for animated methods */
 export type Timing = number | KeyframeAnimationOptions;
 
@@ -68,6 +69,27 @@ export const EFFECTS = {
 	}
 }
 
+/** @ignore
+ * Persisting styles post-animation is surprisingly tricky. Ideally, the correct way should be
+ * 1) wait for the animation to finish, 2) call commitStyles(). This does not seem to always work:
+ *
+ * A) only commitStyles(): works in Chrome, does nothing in Firefox, auto-fixes itself with
+ * a secondary commitStyles() call
+ *
+ * B) using "both" fill mode (with or without commitStyles()): styles are persisted after the animation,
+ * but it is not possible to change them afterwards with a direct property setting.
+ *
+ * C) using commitStyles() and cancel(): works in Chrome, does not persist in Firefox
+ *
+ * D) using "both" fill mode and cancel(): no persistence anywhere
+ *
+ * D) using "both", commitStyles() AND cancel(): seems to work everywhere
+ *
+ * According to MDN, fill:both/forward is not recommended, as it prevents the animation from being removed.
+ * That is why we remove it explicitly via cancel().
+ */
+const FORCED_FILL_MODE = "both" as FillMode;
+
 
 /**
  * The <rl-display> Custom Element. Uses Shadow DOM, contents are not visible. To show stuff, use its JS API.
@@ -116,7 +138,7 @@ export default class RlDisplay extends HTMLElement {
 			"--pan-dy": ((rows-1)/2 - y) * scale,
 			"--scale": scale
 		}
-		let options = mergeTiming({duration:300, fill:"both" as FillMode}, timing);
+		let options = mergeTiming({duration:300, fill:FORCED_FILL_MODE}, timing);
 		let a = this.animate([props], options);
 		return waitAndCommit(a);
 	}
@@ -140,8 +162,9 @@ export default class RlDisplay extends HTMLElement {
 		let node: HTMLElement;
 		let data = this.#storage.getById(id);
 		if (data) {
-			// fixme applyDepth na stare pozici
+			let { x:oldX, y:oldY } = data;
 			this.#storage.update(id, {x, y, zIndex});
+			if (oldX != x || oldY != y) { this.#applyDepth(oldX, oldY); }
 			node = data.node;
 		} else {
 			node = document.createElement("div");
@@ -175,8 +198,9 @@ export default class RlDisplay extends HTMLElement {
 			"--x": x,
 			"--y": y
 		};
-		let options = mergeTiming({duration:150, fill:"both" as FillMode}, timing);
+		let options = mergeTiming({duration:150, fill:FORCED_FILL_MODE}, timing);
 		let a = data.node.animate([props], options);
+		window.aa = a;
 		await waitAndCommit(a);
 		this.#applyDepth(x, y);
 	}
@@ -258,7 +282,10 @@ function mergeTiming(options: KeyframeAnimationOptions, timing?: Timing) {
 
 async function waitAndCommit(a: Animation) {
 	await a.finished;
-	(a.effect as KeyframeEffect)!.target!.isConnected && a.commitStyles();
+	if ((a.effect as KeyframeEffect)!.target!.isConnected) {
+		a.commitStyles();
+		a.cancel();
+	}
 }
 
 function createStyle(src: string) {

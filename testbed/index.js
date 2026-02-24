@@ -48,9 +48,12 @@ while (true) {
 	let key = await readKey();
 	switch (key.key) {
 		case "ArrowLeft": position[0]--; display.move(id, ...position); display.panTo(...position); display.fx(id, "pulse"); break;
-		case "ArrowRight": position[0]++; display.move(id, ...position); break;
+//		case "ArrowRight": position[0]++; display.move(id, ...position); break;
+		case "ArrowRight": position[0]++; display.draw(position[0], position[1], {}, {id, zIndex:1}); break;
 		case "ArrowUp": position[1]--; display.move(id, ...position); break;
 		case "ArrowDown": position[1]++; display.move(id, ...position); break;
+		case "Escape": display.panTo(10, 10, 0.5); break;
+		case "Enter": display.panTo(10, 10, 1); break;
 	}
 }
 
