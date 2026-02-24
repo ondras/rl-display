@@ -20,6 +20,9 @@ export interface DrawOptions {
 
 	/** depth */
 	zIndex?: number;
+
+	/** HTML "part" attribute */
+	part?: string;
 }
 
 /** Pre-built effects */
@@ -148,6 +151,7 @@ export default class RlDisplay extends HTMLElement {
 
 		updateVisual(node, visual);
 		updateProperties(node, {"--x":x, "--y":y, "z-index":zIndex});
+		if (options.part) { node.part = options.part; }
 
 		this.#applyDepth(x, y);
 
