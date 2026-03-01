@@ -200,7 +200,6 @@ export default class RlDisplay extends HTMLElement {
 		};
 		let options = mergeTiming({duration:150, fill:FORCED_FILL_MODE}, timing);
 		let a = data.node.animate([props], options);
-		window.aa = a;
 		await waitAndCommit(a);
 		this.#applyDepth(x, y);
 	}
@@ -270,7 +269,7 @@ export default class RlDisplay extends HTMLElement {
 }
 
 function mergeTiming(options: KeyframeAnimationOptions, timing?: Timing) {
-	if (timing) {
+	if (timing !== undefined) {
 		if (typeof(timing) == "number") {
 			options.duration = timing;
 		} else {
