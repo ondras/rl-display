@@ -221,7 +221,7 @@ export default class RlDisplay extends HTMLElement {
 	}
 
 	/** @ignore */
-	clearAll() {
+	clear() {
 		// FIXME
 	}
 

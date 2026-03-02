@@ -12,8 +12,10 @@ export abstract class Storage<ID, D = {}> {
 	abstract add(id: ID, data: (D & BaseData)): void;
 	abstract update(id: ID, data: Partial<(D & BaseData)>): void;
 	abstract delete(id: ID): void;
+	abstract clear(): void;
 
 	abstract entries(): Iterable<[ID, D & BaseData]>;
+
 }
 
 export class ArrayStorage<ID, D = {}> extends Storage<ID, D> {
@@ -41,6 +43,10 @@ export class ArrayStorage<ID, D = {}> extends Storage<ID, D> {
 	delete(id: ID) {
 		let index = this.#data.findIndex(item => item.id == id);
 		this.#data.splice(index, 1);
+	}
+
+	clear() {
+		this.#data = [];
 	}
 
 	entries() {
@@ -95,6 +101,12 @@ export class MapStorage<ID, D = {}> extends Storage<ID, D> {
 		let key = this.#idToKey.get(id)!;
 		this.#keyToIds.get(key)!.delete(id);
 		this.#idToKey.delete(id);
+	}
+
+	clear() {
+		this.#idToData.clear();
+		this.#idToKey.clear();
+		this.#keyToIds.clear();
 	}
 
 	entries() {

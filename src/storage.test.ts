@@ -98,9 +98,18 @@ function test(ctor: StorageCtor) {
 			assertEquals(s.getById(id), data);
 		});
 	});
-}
 
+	Deno.test(L + "clear", () => {
+		let s = new ctor();
+		s.add("id1", {x:2, y:3, zIndex:0});
+		s.add("id2", {x:3, y:4, zIndex:1});
+
+		s.clear();
+
+		assertEquals(s.getById("id1"), undefined);
+		assertEquals(s.getById("id2"), undefined);
+	});
+}
 
 test(storage.ArrayStorage);
 test(storage.MapStorage);
-
