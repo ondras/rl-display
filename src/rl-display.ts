@@ -281,10 +281,10 @@ function mergeTiming(options: KeyframeAnimationOptions, timing?: Timing) {
 
 async function waitAndCommit(a: Animation) {
 	await a.finished;
-	if ((a.effect as KeyframeEffect)!.target!.isConnected) {
+	try { // try-catch: might be disconnected, invisible, etc
 		a.commitStyles();
-		a.cancel();
-	}
+		a.cancel(); // FIXME remove once the Firefox bug is fixed: https://bugzilla.mozilla.org/show_bug.cgi?id=2019080
+	} catch (e) {}
 }
 
 function createStyle(src: string) {
